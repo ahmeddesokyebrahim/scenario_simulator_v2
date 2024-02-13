@@ -57,11 +57,34 @@ private:
 
   const size_t MAX_SPAWN_NUMBER = 10;
   bool ego_is_in_stuck_ = false;
+  bool driving_to_destination_ = true;
+
+  // 300087:テレポート駅路肩レーン
+  // 179398:未来館駐車場走行レーン
+  // 179443:未来館駐車場路肩レーン
+  // 190785:未来館駐車場路肩レーン
+  // 178481:未来館と走行レーンの間のレーン
+  // 1290:未来館左折退場後右側走行レーン
+  lanelet::Id start_lane_id_ = 300087;
+  std::vector<lanelet::Id> route_to_destination_ids_ = { 40, 179443};
+  lanelet::Id destination_lane_id_ = 179443;
+  std::vector<lanelet::Id> route_to_start_lane_ids_ = {190029 ,300087};
+
+
 
   MyStopWatch<> sw_ego_stuck_;
 
   StateManager<std::string> tl_state_manager_{{"red", "amber", "green"}, {10.0, 3.0, 10.0}};
   StateManager<std::string> crosswalk_pedestrian_state_manager_{{"go", "stop"}, {15.0, 15.0}};
+
+  void updateRoute(const std::vector<lanelet::Id> & new_goal_lane_ids)
+  {
+    std::vector<traffic_simulator::CanonicalizedLaneletPose> new_lane_poses;
+    for (const auto & id : new_goal_lane_ids) {
+      new_lane_poses.push_back(api_.canonicalize(constructLaneletPose(id, 0, 0, 0, 0, 0)));
+    }
+    api_.requestAssignRoute("ego", new_lane_poses);
+  }
 
   // If ego is far from lane_id, remove all entities.
   // Return if the ego is close to the lane_id.
@@ -383,6 +406,23 @@ private:
     spawnAndDespawnRelativeFromEgoInRange(34621, 10.0, 20.0, 10.0, -5.0);
 #endif
 
+    constexpr double reach_tolerance = 3.0;
+    const auto stuck_time = api_.getStandStillDuration("ego");
+    const bool ego_is_in_stop = stuck_time > 5.0;
+    if (
+      ego_is_in_stop && driving_to_destination_ &&
+      api_.reachPosition(
+        "ego", api_.canonicalize(constructLaneletPose(destination_lane_id_, 0.0)),
+        reach_tolerance)) {
+      updateRoute(route_to_start_lane_ids_);
+      driving_to_destination_ = false;
+    } else if (
+      ego_is_in_stop && !driving_to_destination_ &&
+      api_.reachPosition(
+        "ego", api_.canonicalize(constructLaneletPose(start_lane_id_, 0.0)), reach_tolerance)) {
+      updateRoute(route_to_destination_ids_);
+      driving_to_destination_ = true;
+    }
 
     if (processForEgoStuck()) {
       return;
@@ -402,6 +442,7 @@ private:
     spawnRoadParkingVehicles(1262, randomInt(1, 4), DIRECTION::RIGHT);  // 右駐車は避けれん
     spawnRoadParkingVehicles(1265, randomInt(1, 4), DIRECTION::LEFT);
     spawnRoadParkingVehicles(1278, randomInt(1, 2), DIRECTION::LEFT);
+    // 未来館に静止物体生成
     spawnRoadParkingVehicles(179398, randomInt(1, 2), DIRECTION::LEFT);
     spawnRoadParkingVehicles(190784, randomInt(0, 1), DIRECTION::LEFT);
     spawnRoadParkingVehicles(190797, randomInt(0, 1), DIRECTION::LEFT);
@@ -489,14 +530,14 @@ private:
 
     // 初期値とゴールを設定。初期値は一度しか指定できない。ゴールは何度も指定できるが、Rvizから指定した方が早そう。
     // 路肩からの発進時に同じノード名で複数ノードが起動されてしまいautowareが発信できなくなってしまうエラーがあるため、duplicated_node_checkerを無効化する必要あり。
-    const auto spawn_pose = api_.canonicalize(constructLaneletPose(300087, 10, 0, 0, 0, 0));
+    const auto spawn_pose = api_.canonicalize(constructLaneletPose(start_lane_id_, 0, 0, 0, 0, 0));
     const auto goal_poses = [&](const std::vector<lanelet::Id> lane_ids) {
       std::vector<traffic_simulator::CanonicalizedLaneletPose> poses;
       for (const auto id : lane_ids) {
         poses.push_back(api_.canonicalize(constructLaneletPose(id, 0, 0, 0, 0, 0)));
       }
       return poses;
-    }({40, 179398, 1467, 179335});  // 最後がゴール、その前は並び順でcheck point
+    }(route_to_destination_ids_);  // 最後がゴール、その前は並び順でcheck point
     spawnEgoEntity(spawn_pose, goal_poses, getVehicleParameters());
 
   }
