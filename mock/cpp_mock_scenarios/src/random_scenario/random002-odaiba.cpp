@@ -39,7 +39,7 @@ public:
   explicit RandomScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "lanechange_left", /* ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map" */
-      "/home/horibe/workspace/map/odaiba_reference",
+      "/home/planning-control-developer/workspace/odaiba_stable",
       "lanelet2_map.osm", __FILE__, false, option),
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
     engine_(seed_gen_())
@@ -530,7 +530,7 @@ private:
 
     // 初期値とゴールを設定。初期値は一度しか指定できない。ゴールは何度も指定できるが、Rvizから指定した方が早そう。
     // 路肩からの発進時に同じノード名で複数ノードが起動されてしまいautowareが発信できなくなってしまうエラーがあるため、duplicated_node_checkerを無効化する必要あり。
-    const auto spawn_pose = api_.canonicalize(constructLaneletPose(start_lane_id_, 0, 0, 0, 0, 0));
+    const auto spawn_pose = api_.canonicalize(constructLaneletPose(start_lane_id_, 5.0, 0, 0, 0, 0));
     const auto goal_poses = [&](const std::vector<lanelet::Id> lane_ids) {
       std::vector<traffic_simulator::CanonicalizedLaneletPose> poses;
       for (const auto id : lane_ids) {
