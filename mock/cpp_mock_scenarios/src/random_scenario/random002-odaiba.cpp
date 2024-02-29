@@ -39,7 +39,7 @@ public:
   explicit RandomScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "lanechange_left", /* ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map" */
-      "/home/planning-control-developer/workspace/odaiba_stable",
+      "/home/satoshi/workspace/odaiba_beta",
       "lanelet2_map.osm", __FILE__, false, option),
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
     engine_(seed_gen_())
@@ -59,6 +59,9 @@ private:
   bool ego_is_in_stuck_ = false;
   bool driving_to_destination_ = true;
 
+  std::vector<lanelet::Id> goal_no1_candidate_ids_ = {190609, 179443, 190785, 190794};
+  std::vector<lanelet::Id> goal_no2_candidate_ids_ = {300087};
+
   // 300087:テレポート駅路肩レーン
   // 179398:未来館駐車場走行レーン
   // 179443:未来館駐車場路肩レーン
@@ -66,9 +69,9 @@ private:
   // 178481:未来館と走行レーンの間のレーン
   // 1290:未来館左折退場後右側走行レーン
   lanelet::Id start_lane_id_ = 300087;
-  std::vector<lanelet::Id> route_to_destination_ids_ = { 40, 179443};
+  std::vector<lanelet::Id> route_to_destination_ids_ = {40, 179443};
   lanelet::Id destination_lane_id_ = 179443;
-  std::vector<lanelet::Id> route_to_start_lane_ids_ = {190029 ,300087};
+  std::vector<lanelet::Id> route_to_start_lane_ids_ = {190029, 1412, 300087};
 
 
 
@@ -81,7 +84,7 @@ private:
   {
     std::vector<traffic_simulator::CanonicalizedLaneletPose> new_lane_poses;
     for (const auto & id : new_goal_lane_ids) {
-      new_lane_poses.push_back(api_.canonicalize(constructLaneletPose(id, 0, 0, 0, 0, 0)));
+      new_lane_poses.push_back(api_.canonicalize(constructLaneletPose(id, 5.0, 0, 0, 0, 0)));
     }
     api_.requestAssignRoute("ego", new_lane_poses);
   }
@@ -406,22 +409,27 @@ private:
     spawnAndDespawnRelativeFromEgoInRange(34621, 10.0, 20.0, 10.0, -5.0);
 #endif
 
-    constexpr double reach_tolerance = 3.0;
+    constexpr double reach_tolerance = 10.0;
     const auto stuck_time = api_.getStandStillDuration("ego");
     const bool ego_is_in_stop = stuck_time > 5.0;
-    if (
-      ego_is_in_stop && driving_to_destination_ &&
-      api_.reachPosition(
-        "ego", api_.canonicalize(constructLaneletPose(destination_lane_id_, 0.0)),
-        reach_tolerance)) {
-      updateRoute(route_to_start_lane_ids_);
-      driving_to_destination_ = false;
-    } else if (
-      ego_is_in_stop && !driving_to_destination_ &&
-      api_.reachPosition(
-        "ego", api_.canonicalize(constructLaneletPose(start_lane_id_, 0.0)), reach_tolerance)) {
-      updateRoute(route_to_destination_ids_);
-      driving_to_destination_ = true;
+    if (ego_is_in_stop && driving_to_destination_) {
+      const auto reach_target_lane =
+        std::any_of(goal_no1_candidate_ids_.begin(), goal_no1_candidate_ids_.end(), [this](const auto & id){
+          return api_.isInLanelet("ego", id, 0.1);
+          });
+      if(reach_target_lane) {
+        updateRoute(route_to_start_lane_ids_);
+        driving_to_destination_ = false;
+      }
+    } else if (ego_is_in_stop && !driving_to_destination_) {
+      const auto reach_target_lane =
+        std::any_of(goal_no2_candidate_ids_.begin(), goal_no2_candidate_ids_.end(), [this](const auto & id){
+          return api_.isInLanelet("ego", id, 0.1);
+          });
+      if (reach_target_lane) {
+        updateRoute(route_to_destination_ids_);
+        driving_to_destination_ = true;
+      }
     }
 
     if (processForEgoStuck()) {
@@ -534,7 +542,7 @@ private:
     const auto goal_poses = [&](const std::vector<lanelet::Id> lane_ids) {
       std::vector<traffic_simulator::CanonicalizedLaneletPose> poses;
       for (const auto id : lane_ids) {
-        poses.push_back(api_.canonicalize(constructLaneletPose(id, 0, 0, 0, 0, 0)));
+        poses.push_back(api_.canonicalize(constructLaneletPose(id, 5.0, 0, 0, 0, 0)));
       }
       return poses;
     }(route_to_destination_ids_);  // 最後がゴール、その前は並び順でcheck point
