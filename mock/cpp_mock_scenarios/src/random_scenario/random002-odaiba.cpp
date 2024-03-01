@@ -39,7 +39,7 @@ public:
   explicit RandomScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "lanechange_left", /* ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map" */
-      "/home/satoshi/workspace/odaiba_beta",
+      "/home/planning-control-developer/workspace/odaiba_beta",
       "lanelet2_map.osm", __FILE__, false, option),
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
     engine_(seed_gen_())
@@ -413,20 +413,28 @@ private:
     const auto stuck_time = api_.getStandStillDuration("ego");
     const bool ego_is_in_stop = stuck_time > 5.0;
     if (ego_is_in_stop && driving_to_destination_) {
+	std::cout << __func__ << ":" << __LINE__ << std::endl;
       const auto reach_target_lane =
-        std::any_of(goal_no1_candidate_ids_.begin(), goal_no1_candidate_ids_.end(), [this](const auto & id){
-          return api_.isInLanelet("ego", id, 0.1);
+        std::any_of(goal_no1_candidate_ids_.begin(), goal_no1_candidate_ids_.end(), [&, this](const auto & id){
+    	  const auto target_lane = api_.canonicalize(constructLaneletPose(id, 5.0));
+          return api_.reachPosition("ego", target_lane, reach_tolerance);
+          // return api_.isInLanelet("ego", id, 5.0);
           });
       if(reach_target_lane) {
+	std::cout << "REACH GOAL NO.1!!!" << std::endl;
         updateRoute(route_to_start_lane_ids_);
         driving_to_destination_ = false;
       }
     } else if (ego_is_in_stop && !driving_to_destination_) {
+	std::cout << __func__ << ":" << __LINE__ << std::endl;
       const auto reach_target_lane =
-        std::any_of(goal_no2_candidate_ids_.begin(), goal_no2_candidate_ids_.end(), [this](const auto & id){
-          return api_.isInLanelet("ego", id, 0.1);
+        std::any_of(goal_no2_candidate_ids_.begin(), goal_no2_candidate_ids_.end(), [&, this](const auto & id){
+    	  const auto target_lane = api_.canonicalize(constructLaneletPose(id, 5.0));
+          return api_.reachPosition("ego", target_lane, reach_tolerance);
+          // return api_.isInLanelet("ego", id, 5.0);
           });
       if (reach_target_lane) {
+	std::cout << "REACH GOAL NO.2!!!" << std::endl;
         updateRoute(route_to_destination_ids_);
         driving_to_destination_ = true;
       }
