@@ -3590,11 +3590,11 @@ Visualization Manager:
             - Class: rviz_plugins/StringStampedOverlayDisplay
               Enabled: true
               Font Size: 15
-              Left: 1024
+              Left: 10
               Max Letter Num: 100
               Name: StringStampedOverlayDisplay
               Text Color: 25; 255; 240
-              Top: 128
+              Top: 500
               Topic:
                 Depth: 5
                 Durability Policy: Volatile
