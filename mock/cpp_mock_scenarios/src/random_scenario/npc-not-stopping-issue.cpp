@@ -156,37 +156,6 @@ private:
     }
   }
 
-
-  /// Despawn parking entity before replacing parking entity.
-  void despawnRoadParkingVehicles()
-  {
-    for (int i = 0; i < params_.random_parameters.road_parking_vehicle.number_of_vehicle; i++) {
-      api_.despawn("road_parking_" + std::to_string(i));
-    }
-  }
-
-  void spawnAndDespawnRelativeFromEgoInRange(
-    const lanelet::Id & trigger_lane_id, const double trigger_lane_s, const double trigger_range,
-    const double rel_x, const double rel_y)
-  {
-    const auto trigger_position =
-      api_.canonicalize(constructLaneletPose(trigger_lane_id, trigger_lane_s));
-    const auto entity_name = "spawn_nearby_ego";
-    if (
-      api_.reachPosition("ego", trigger_position, trigger_range) &&
-      !api_.entityExists(entity_name)) {
-      api_.spawn(
-        entity_name, api_.getMapPoseFromRelativePose("ego", createPose(rel_x, rel_y)),
-        getVehicleParameters(),
-        traffic_simulator::entity::VehicleEntity::BuiltinBehavior::doNothing());
-    }
-    if (
-      !api_.reachPosition("ego", trigger_position, trigger_range) &&
-      api_.entityExists(entity_name)) {
-      api_.despawn(entity_name);
-    }
-  }
-
   void onUpdate() override
   {
     constexpr double reach_tolerance = 3.0;
@@ -214,7 +183,7 @@ private:
 
   void onInitialize() override
   {
-    // api_.setVerbose(true);
+//    api_.setVerbose(true);
 
     srand(time(0));  // Initialize random seed
 
