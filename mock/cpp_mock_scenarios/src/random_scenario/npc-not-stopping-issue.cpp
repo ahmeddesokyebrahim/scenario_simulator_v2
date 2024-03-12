@@ -207,35 +207,9 @@ private:
       driving_to_destination_ = true;
     }
 
-    constexpr double MIN_VEL = 5.0;
-    constexpr double MAX_VEL = 20.0;
-
-    // === 以下、egoが特定のレーンに近づいたらNPCを生成する ===
-
-    // 目的レーンまで動く移動物体を生成
-    spawnAndMoveToGoal(176261, 176175, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(350, 163, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(350, 1506, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1482, 38, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1483, 38, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1484, 39, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1501, 40, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(32, 38, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(33, 39, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(34, 40, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1314, 41, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(94, 41, MIN_VEL, MAX_VEL);
-
-    spawnAndMoveToGoal(175378, 174994, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1263, 106, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1265, 178001, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1153, 94, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(178233, 179475, MIN_VEL, MAX_VEL);
-
-    spawnAndMoveToGoal(74, 84, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(75, 83, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(75, 178573, MIN_VEL, MAX_VEL);
-    spawnAndMoveToGoal(1483, 1500, MIN_VEL, MAX_VEL);
+    spawnAndMoveToGoal(1482, 38, 15.0, 15.0);
+//    spawnAndMoveToGoal(1483, 38, 15.0, 15.0);
+//    spawnAndMoveToGoal(1484, 39, 15.0, 15.0);
   }
 
   void onInitialize() override
@@ -252,7 +226,7 @@ private:
     const auto goal_poses = [&](const std::vector<lanelet::Id> lane_ids) {
       std::vector<traffic_simulator::CanonicalizedLaneletPose> poses;
       for (const auto id : lane_ids) {
-        poses.push_back(api_.canonicalize(constructLaneletPose(id, 0, 0, 0, 0, 0)));
+        poses.push_back(api_.canonicalize(constructLaneletPose(id, 20, 0, 0, 0, 0)));
       }
       return poses;
     }(route_to_destination_ids_);  // 最後がゴール、その前は並び順でcheck point
