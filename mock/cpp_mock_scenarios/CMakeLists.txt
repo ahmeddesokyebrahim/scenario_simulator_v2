@@ -38,8 +38,8 @@ ament_auto_add_executable(traffic_simulation_demo
 )
 target_link_libraries(traffic_simulation_demo cpp_scenario_node)
 
-option(BUILD_CPP_MOCK_SCENARIOS "Building the C++ scenarios" OFF)
-if(BUILD_CPP_MOCK_SCENARIOS)
+#option(BUILD_CPP_MOCK_SCENARIOS "Building the C++ scenarios" ON)
+#if(BUILD_CPP_MOCK_SCENARIOS)
   add_subdirectory(src/behavior_plugin)
   add_subdirectory(src/collision)
   add_subdirectory(src/crosswalk)
@@ -53,7 +53,7 @@ if(BUILD_CPP_MOCK_SCENARIOS)
   add_subdirectory(src/pedestrian)
   add_subdirectory(src/random_scenario)
   add_subdirectory(src/speed_planning)
-endif()
+#endif()
 
 install(
   DIRECTORY launch rviz

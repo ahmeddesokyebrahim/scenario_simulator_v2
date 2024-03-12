@@ -20,6 +20,22 @@ install(TARGETS
   DESTINATION lib/cpp_mock_scenarios
 )
 
+ament_auto_add_executable(npc-not-stopping-issue
+        npc-not-stopping-issue.cpp
+        )
+target_link_libraries(npc-not-stopping-issue
+        cpp_scenario_node
+        random001_parameters
+        )
+target_include_directories(npc-not-stopping-issue
+        PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/random001_parameters/include
+        )
+
+install(TARGETS
+        npc-not-stopping-issue
+        DESTINATION lib/cpp_mock_scenarios
+        )
+
 if(BUILD_TESTING)
   include(../../cmake/add_cpp_mock_scenario_test.cmake)
   # add_cpp_mock_scenario_test(${PROJECT_NAME} "random001" "10.0")
