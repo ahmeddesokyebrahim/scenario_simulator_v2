@@ -86,47 +86,20 @@ private:
     api_.requestAssignRoute("ego", new_lane_poses);
   }
 
-  // If ego is far from lane_id, remove all entities.
-  // Return if the ego is close to the lane_id.
-  bool removeFarNPCsAndCheckIsInTriggerDistance(
-    const std::string & entity_name_prefix, const lanelet::Id & lane_id)
-  {
-    const auto removeEntities = [&]() {
-      for (int i = 0; i < MAX_SPAWN_NUMBER; i++) {
-        const std::string name = entity_name_prefix + "_" + std::to_string(i);
-        if (api_.entityExists(name)) {
-          api_.despawn(name);
-        }
-      }
-    };
+  void spawnStationary(
+    const lanelet::Id & spawn_lane_id, const double s) {
 
-    constexpr auto untrigger_distance = 220.0;  // must be longer than trigger_distance
-    constexpr auto trigger_distance = 200.0;  // must be shorter than untrigger_distance
-    constexpr auto too_close_for_trigger_distance = 50.0;  // must be shorter than untrigger_distance
-    const auto target_lane = api_.canonicalize(constructLaneletPose(lane_id, 0.0));
+    const auto spawn_pose = constructLaneletPose(spawn_lane_id, s);
 
-    const bool already_exist = api_.entityExists(entity_name_prefix + "_0");
-
-    // Remove entities if the lane is far from ego.
-    if (already_exist) {
-      if (!api_.reachPosition("ego", target_lane, untrigger_distance)) {
-        removeEntities();
-      }
-      return false;  // no need to spawn vehicles
+    const auto entity_name = "ego";
+    if (!api_.entityExists(entity_name)) {
+      api_.spawn(entity_name, api_.canonicalize(spawn_pose), getVehicleParameters());
+      api_.requestSpeedChange(entity_name, 0.0, true);
+      api_.setLinearVelocity(entity_name, 0.0);
     }
-
-    // No need to spawn since the ego is too close to the lane.
-    if (api_.reachPosition("ego", target_lane, too_close_for_trigger_distance)) {
-      return false;  // no need to spawn vehicles
-    }
-
-    // No need to spawn since the ego is far from the lane.
-    if (!api_.reachPosition("ego", target_lane, trigger_distance)) {
-      return false;  // no need to spawn vehicles
-    }
-
-    return true;  // need to spawn vehicles
   }
+
+  double start_s_ = 20.0;
 
   void spawnAndMoveToGoal(
     const lanelet::Id & spawn_lane_id, const lanelet::Id & goal_lane_id, const double min_v = 3.0,
@@ -134,9 +107,6 @@ private:
   {
     const std::string entity_name_prefix =
       "vehicle_move_to_goal_" + std::to_string(spawn_lane_id) + "_" + std::to_string(goal_lane_id);
-    if (!removeFarNPCsAndCheckIsInTriggerDistance(entity_name_prefix, spawn_lane_id)) {
-      return;
-    }
 
     const auto spawn_pose = constructLaneletPose(spawn_lane_id, 0.0);
     const auto goal_pose = constructLaneletPose(goal_lane_id, 0.0);
@@ -148,59 +118,29 @@ private:
       const auto speed = speed_distribution(engine_);
       api_.requestSpeedChange(entity_name, speed, true);
       api_.setLinearVelocity(entity_name, speed);
+      {
+        spawnStationary(start_lane_id_, start_s_);
+        start_s_ += 0.2;
+      }
     }
 
     constexpr double reach_tolerance = 2.0;
-    if (api_.reachPosition(entity_name, api_.canonicalize(goal_pose), reach_tolerance)) {
+    if (api_.reachPosition(entity_name, api_.canonicalize(goal_pose), reach_tolerance) || api_.getStandStillDuration(entity_name) > 2.0) {
         api_.despawn(entity_name);
+        api_.despawn("ego");
     }
   }
 
   void onUpdate() override
   {
-    constexpr double reach_tolerance = 3.0;
-    const auto stuck_time = api_.getStandStillDuration("ego");
-    const bool ego_is_in_stop = stuck_time > 5.0;
-    if (
-      ego_is_in_stop && driving_to_destination_ &&
-      api_.reachPosition(
-        "ego", api_.canonicalize(constructLaneletPose(destination_lane_id_, 0.0)),
-        reach_tolerance)) {
-      updateRoute(route_to_start_lane_ids_);
-      driving_to_destination_ = false;
-    } else if (
-      ego_is_in_stop && !driving_to_destination_ &&
-      api_.reachPosition(
-        "ego", api_.canonicalize(constructLaneletPose(start_lane_id_, 0.0)), reach_tolerance)) {
-      updateRoute(route_to_destination_ids_);
-      driving_to_destination_ = true;
-    }
-
-    spawnAndMoveToGoal(1482, 38, 15.0, 15.0);
-//    spawnAndMoveToGoal(1483, 38, 15.0, 15.0);
-//    spawnAndMoveToGoal(1484, 39, 15.0, 15.0);
+    std::cout << "UPDATE <<<<<<<< " << std::endl;
+    spawnAndMoveToGoal(1486, 1499, 15.0, 15.0);
   }
 
   void onInitialize() override
   {
-//    api_.setVerbose(true);
-
     srand(time(0));  // Initialize random seed
-
     params_ = param_listener_->get_params();
-
-    // 初期値とゴールを設定。初期値は一度しか指定できない。ゴールは何度も指定できるが、Rvizから指定した方が早そう。
-    // 路肩からの発進時に同じノード名で複数ノードが起動されてしまいautowareが発信できなくなってしまうエラーがあるため、duplicated_node_checkerを無効化する必要あり。
-    const auto spawn_pose = api_.canonicalize(constructLaneletPose(start_lane_id_, 0, 0, 0, 0, 0));
-    const auto goal_poses = [&](const std::vector<lanelet::Id> lane_ids) {
-      std::vector<traffic_simulator::CanonicalizedLaneletPose> poses;
-      for (const auto id : lane_ids) {
-        poses.push_back(api_.canonicalize(constructLaneletPose(id, 20, 0, 0, 0, 0)));
-      }
-      return poses;
-    }(route_to_destination_ids_);  // 最後がゴール、その前は並び順でcheck point
-    spawnEgoEntity(spawn_pose, goal_poses, getVehicleParameters());
-
   }
 };
 
