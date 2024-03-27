@@ -79,6 +79,8 @@ BT::NodeStatus FollowLaneAction::tick()
     setOutput("updated_status", entity_status);
     return BT::NodeStatus::RUNNING;
   }
+
+  const auto stop_distance = calculateStopDistance(behavior_parameter.dynamic_constraints);
   const auto waypoints = calculateWaypoints();
   if (waypoints.waypoints.empty()) {
     return BT::NodeStatus::FAILURE;
@@ -94,8 +96,7 @@ BT::NodeStatus FollowLaneAction::tick()
     if (distance_to_front_entity) {
       if (
         distance_to_front_entity.value() <=
-        calculateStopDistance(behavior_parameter.dynamic_constraints) +
-          vehicle_parameters.bounding_box.dimensions.x + 5) {
+        stop_distance + vehicle_parameters.bounding_box.dimensions.x + 5) {
         return BT::NodeStatus::FAILURE;
       }
     }
@@ -112,16 +113,14 @@ BT::NodeStatus FollowLaneAction::tick()
     if (distance_to_stopline) {
       if (
         distance_to_stopline.value() <=
-        calculateStopDistance(behavior_parameter.dynamic_constraints) +
-          vehicle_parameters.bounding_box.dimensions.x * 0.5 + 5) {
+        stop_distance + vehicle_parameters.bounding_box.dimensions.x * 0.5 + 5) {
         return BT::NodeStatus::FAILURE;
       }
     }
     if (distance_to_conflicting_entity) {
       if (
         distance_to_conflicting_entity.value() <
-        (vehicle_parameters.bounding_box.dimensions.x + 3 +
-         calculateStopDistance(behavior_parameter.dynamic_constraints))) {
+        (vehicle_parameters.bounding_box.dimensions.x + 3 + stop_distance)) {
         return BT::NodeStatus::FAILURE;
       }
     }
@@ -129,6 +128,13 @@ BT::NodeStatus FollowLaneAction::tick()
   if (!target_speed) {
     target_speed = hdmap_utils->getSpeedLimit(route_lanelets);
   }
+
+  if (const auto distance_to_slow_down =
+        getDistanceToNecessarySlowDownBeforeIntersection(route_lanelets, *trajectory);
+      distance_to_slow_down && distance_to_slow_down.value() <= stop_distance) {
+    target_speed = std::min(5.0, target_speed.value());
+  }
+
   setOutput(
     "updated_status", std::make_shared<traffic_simulator::CanonicalizedEntityStatus>(
                         calculateUpdatedEntityStatus(target_speed.value())));

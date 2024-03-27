@@ -57,6 +57,9 @@ public:
   auto getDistanceToTrafficLightStopLine(
     const lanelet::Ids & route_lanelets,
     const math::geometry::CatmullRomSplineInterface & spline) const -> std::optional<double>;
+  auto getDistanceToNecessarySlowDownBeforeIntersection(
+    const lanelet::Ids & route_lanelets,
+    const math::geometry::CatmullRomSplineInterface & spline) const -> std::optional<double>;
   auto getRightOfWayEntities() const -> std::vector<traffic_simulator::CanonicalizedEntityStatus>;
   auto getRightOfWayEntities(const lanelet::Ids & following_lanelets) const
     -> std::vector<traffic_simulator::CanonicalizedEntityStatus>;

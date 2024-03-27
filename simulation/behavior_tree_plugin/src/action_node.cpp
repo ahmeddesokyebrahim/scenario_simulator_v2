@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <behavior_tree_plugin/action_node.hpp>
+#include <geometry/bounding_box.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <scenario_simulator_exception/exception.hpp>
+#include <traffic_simulator/behavior/longitudinal_speed_planning.hpp>
+#include <traffic_simulator/helper/helper.hpp>
+
 #include <quaternion_operation/quaternion_operation.h>
 
 #include <algorithm>
-#include <behavior_tree_plugin/action_node.hpp>
-#include <geometry/bounding_box.hpp>
 #include <memory>
 #include <optional>
-#include <rclcpp/rclcpp.hpp>
-#include <scenario_simulator_exception/exception.hpp>
 #include <set>
 #include <string>
-#include <traffic_simulator/behavior/longitudinal_speed_planning.hpp>
-#include <traffic_simulator/helper/helper.hpp>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -36,7 +37,10 @@ ActionNode::ActionNode(const std::string & name, const BT::NodeConfiguration & c
 {
 }
 
-auto ActionNode::executeTick() -> BT::NodeStatus { return BT::ActionNodeBase::executeTick(); }
+auto ActionNode::executeTick() -> BT::NodeStatus
+{
+  return BT::ActionNodeBase::executeTick();
+}
 
 auto ActionNode::getBlackBoardValues() -> void
 {
@@ -172,6 +176,41 @@ auto ActionNode::getRightOfWayEntities() const
   return ret;
 }
 
+auto ActionNode::getDistanceToNecessarySlowDownBeforeIntersection(
+  const lanelet::Ids & route_lanelets,
+  const math::geometry::CatmullRomSplineInterface & spline) const -> std::optional<double>
+{
+  const auto traffic_light_ids = hdmap_utils->getTrafficLightIdsOnPath(route_lanelets);
+  if (route_lanelets.size() < 2 || traffic_light_ids.empty()) {
+    return std::nullopt;
+  }
+  // check if the next lanelet has any right of way - so it may be necessary to go to yielding
+  const auto right_of_way_ids_list = hdmap_utils->getRightOfWayLaneletIds(route_lanelets.at(1));
+  if (right_of_way_ids_list.empty()) {
+    return std::nullopt;
+  }
+
+  std::set<double> collision_points = {};
+  for (auto && id : traffic_light_ids) {
+    using Color = traffic_simulator::TrafficLight::Color;
+    using Status = traffic_simulator::TrafficLight::Status;
+    using Shape = traffic_simulator::TrafficLight::Shape;
+    if (auto && traffic_light = traffic_light_manager->getTrafficLight(id);
+        traffic_light.empty() or
+        traffic_light.contains(Color::green, Status::solid_on, Shape::circle)) {
+      if (const auto collision_point = hdmap_utils->getDistanceToTrafficLightStopLine(spline, id);
+          collision_point) {
+        collision_points.insert(collision_point.value());
+      }
+    }
+  }
+
+  if (collision_points.empty()) {
+    return std::nullopt;
+  }
+  return *collision_points.begin();
+}
+
 auto ActionNode::getDistanceToTrafficLightStopLine(
   const lanelet::Ids & route_lanelets,
   const math::geometry::CatmullRomSplineInterface & spline) const -> std::optional<double>
@@ -228,7 +267,8 @@ auto ActionNode::getFrontEntityName(const math::geometry::CatmullRomSplineInterf
       entity_status->getMapPose().orientation,
       other_entity_status.at(each.first).getMapPose().orientation);
     /**
-     * @note hard-coded parameter, if the Yaw value of RPY is in ~1.5708 -> 1.5708, entity is a candidate of front entity.
+     * @note hard-coded parameter, if the Yaw value of RPY is in ~1.5708 -> 1.5708, entity is a
+     * candidate of front entity.
      */
     if (
       std::fabs(quaternion_operation::convertQuaternionToEulerAngle(quat).z) <=
