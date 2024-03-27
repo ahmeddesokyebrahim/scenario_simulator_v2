@@ -55,6 +55,7 @@ public:
   auto getLinearJerk() const noexcept -> double;
   auto setTime(double) -> void;
   auto getTime() const noexcept -> double;
+  auto getName() const { return entity_status_.name; }
 
 private:
   auto canonicalize(
