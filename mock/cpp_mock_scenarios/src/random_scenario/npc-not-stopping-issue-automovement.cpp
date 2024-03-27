@@ -12,26 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <quaternion_operation/quaternion_operation.h>
+
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
 #include <random001_parameters.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <traffic_simulator/api/api.hpp>
-
-#include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
 #include <traffic_simulator/helper/stop_watch.hpp>
+#include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
 
-#include <quaternion_operation/quaternion_operation.h>
 #include "./random_util.hpp"
 
 // headers in STL
+#include <cstdlib>
+#include <ctime>
 #include <memory>
 #include <random>
 #include <string>
 #include <vector>
-#include <cstdlib>
-#include <ctime>
 
 class RandomScenario : public cpp_mock_scenarios::CppScenarioNode
 {
@@ -39,8 +39,8 @@ public:
   explicit RandomScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "lanechange_left", /* ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map" */
-      "/home/pzyskowski/projects/tier/deliverable/current/WP12/780/map",
-      "lanelet2_map.osm", __FILE__, false, option),
+      "/home/pzyskowski/projects/tier/deliverable/current/WP12/780/map", "lanelet2_map.osm",
+      __FILE__, false, option),
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
     engine_(seed_gen_())
   {
@@ -66,11 +66,9 @@ private:
   // 178481:未来館と走行レーンの間のレーン
   // 1290:未来館左折退場後右側走行レーン
   lanelet::Id start_lane_id_ = 190336;
-  std::vector<lanelet::Id> route_to_destination_ids_ = { 40, 179443};
+  std::vector<lanelet::Id> route_to_destination_ids_ = {40, 179443};
   lanelet::Id destination_lane_id_ = 179443;
-  std::vector<lanelet::Id> route_to_start_lane_ids_ = {190029 ,300087};
-
-
+  std::vector<lanelet::Id> route_to_start_lane_ids_ = {190029, 300087};
 
   MyStopWatch<> sw_ego_stuck_;
 
@@ -86,9 +84,8 @@ private:
     api_.requestAssignRoute("ego", new_lane_poses);
   }
 
-  void spawnStationary(
-    const lanelet::Id & spawn_lane_id, const double s) {
-
+  void spawnStationary(const lanelet::Id & spawn_lane_id, const double s)
+  {
     const auto spawn_pose = constructLaneletPose(spawn_lane_id, s);
 
     const auto entity_name = "ego";
@@ -125,9 +122,11 @@ private:
     }
 
     constexpr double reach_tolerance = 2.0;
-    if (api_.reachPosition(entity_name, api_.canonicalize(goal_pose), reach_tolerance) || api_.getStandStillDuration(entity_name) > 2.0) {
-        api_.despawn(entity_name);
-        api_.despawn("ego");
+    if (
+      api_.reachPosition(entity_name, api_.canonicalize(goal_pose), reach_tolerance) ||
+      api_.getStandStillDuration(entity_name) > 2.0) {
+      api_.despawn(entity_name);
+      api_.despawn("ego");
     }
   }
 
