@@ -117,6 +117,8 @@ auto ActionNode::getYieldStopDistance(const lanelet::Ids & following_lanelets) c
           lanelet_pose, traffic_simulator::helper::constructLaneletPose(lanelet, 0));
         if (distance) {
           distances.insert(distance.value());
+        } else {
+          distances.insert(0.0);
         }
       }
     }
