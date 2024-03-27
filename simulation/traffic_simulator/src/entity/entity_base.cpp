@@ -219,13 +219,13 @@ auto EntityBase::fillLaneletPose(CanonicalizedEntityStatus & status, bool includ
 
   if (unique_route_lanelets.empty()) {
     lanelet_pose = hdmap_utils_ptr_->toLaneletPose(
-      status_non_canonicalized.pose, getBoundingBox(), include_crosswalk, 1.0);
+      status_non_canonicalized.pose, getBoundingBox(), include_crosswalk, 2.0);
   } else {
     lanelet_pose =
-      hdmap_utils_ptr_->toLaneletPose(status_non_canonicalized.pose, unique_route_lanelets, 1.0);
+      hdmap_utils_ptr_->toLaneletPose(status_non_canonicalized.pose, unique_route_lanelets, 2.0);
     if (!lanelet_pose) {
       lanelet_pose = hdmap_utils_ptr_->toLaneletPose(
-        status_non_canonicalized.pose, getBoundingBox(), include_crosswalk, 1.0);
+        status_non_canonicalized.pose, getBoundingBox(), include_crosswalk, 2.0);
     }
   }
   if (lanelet_pose) {
