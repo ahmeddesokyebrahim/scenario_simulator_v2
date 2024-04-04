@@ -31,9 +31,12 @@ void Preprocessor::preprocessScenario(
 
   auto distribution = derive(scenario_path);
   if (distribution.empty()) {
+    std::cout << "add normal scenario: " << scenario_path << std::endl;
     preprocessed_scenarios.push(scenario_path);  // normal scenario
   } else {
+    std::cout << "load as parameter distribution: " << scenario_path << std::endl;
     auto base_scenario_path = derive.get_scenario_path();
+    std::cout << "base scenario path: " << base_scenario_path << std::endl;
     generateDerivedScenarioFromDistribution(distribution, base_scenario_path, output_format);
   }
 }
