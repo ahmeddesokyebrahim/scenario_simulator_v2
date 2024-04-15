@@ -17,19 +17,19 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
+#include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
 #include <traffic_simulator/api/api.hpp>
 #include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
-
-// headers in STL
-#include <memory>
-#include <string>
 #include <vector>
 
-class AcquireRouteInWorldFrame : public cpp_mock_scenarios::CppScenarioNode
+namespace cpp_mock_scenarios
+{
+class AcquireRouteInWorldFrameScenario : public cpp_mock_scenarios::CppScenarioNode
 {
 public:
-  explicit AcquireRouteInWorldFrame(const rclcpp::NodeOptions & option)
+  explicit AcquireRouteInWorldFrameScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "assign_route_in_world_frame",
       ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map", "lanelet2_map.osm",
@@ -62,12 +62,13 @@ private:
     api_.requestAssignRoute("ego", goal_poses);
   }
 };
+}  // namespace cpp_mock_scenarios
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions options;
-  auto component = std::make_shared<AcquireRouteInWorldFrame>(options);
+  auto component = std::make_shared<cpp_mock_scenarios::AcquireRouteInWorldFrameScenario>(options);
   rclcpp::spin(component);
   rclcpp::shutdown();
   return 0;

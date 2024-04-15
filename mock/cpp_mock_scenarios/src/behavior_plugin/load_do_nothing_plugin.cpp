@@ -17,20 +17,20 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
+#include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
 #include <traffic_simulator/api/api.hpp>
 #include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
-
-// headers in STL
-#include <memory>
-#include <string>
 #include <vector>
 
+namespace cpp_mock_scenarios
+{
 /// @note Test case to verify if the do_nothing plugin can be loaded.
-class LoadDoNothingPlugin : public cpp_mock_scenarios::CppScenarioNode
+class LoadDoNothingPluginScenario : public cpp_mock_scenarios::CppScenarioNode
 {
 public:
-  explicit LoadDoNothingPlugin(const rclcpp::NodeOptions & option)
+  explicit LoadDoNothingPluginScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "crashing_npc", ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map",
       "private_road_and_walkway_ele_fix/lanelet2_map.osm", __FILE__, false, option)
@@ -47,6 +47,22 @@ private:
       api_.getCurrentAction("pedestrian") != "do_nothing") {
       stop(cpp_mock_scenarios::Result::FAILURE);
     }
+    if (
+      api_.getCurrentAction("vehicle_spawn_with_behavior_tree") == "do_nothing" ||
+      api_.getCurrentAction("pedestrian_spawn_with_behavior_tree") == "do_nothing") {
+      stop(cpp_mock_scenarios::Result::FAILURE);
+    }
+    api_.resetBehaviorPlugin(
+      "vehicle_spawn_with_behavior_tree",
+      traffic_simulator::entity::VehicleEntity::BuiltinBehavior::doNothing());
+    api_.resetBehaviorPlugin(
+      "pedestrian_spawn_with_behavior_tree",
+      traffic_simulator::entity::PedestrianEntity::BuiltinBehavior::doNothing());
+    if (
+      api_.getCurrentAction("vehicle_spawn_with_behavior_tree") != "do_nothing" ||
+      api_.getCurrentAction("pedestrian_spawn_with_behavior_tree") != "do_nothing") {
+      stop(cpp_mock_scenarios::Result::FAILURE);
+    }
 
     stop(cpp_mock_scenarios::Result::SUCCESS);
   }
@@ -60,14 +76,25 @@ private:
       "pedestrian", api_.canonicalize(traffic_simulator::helper::constructLaneletPose(34741, 3, 0)),
       getPedestrianParameters(),
       traffic_simulator::entity::PedestrianEntity::BuiltinBehavior::doNothing());
+    api_.spawn(
+      "vehicle_spawn_with_behavior_tree",
+      api_.canonicalize(traffic_simulator::helper::constructLaneletPose(34741, 2.0, 0)),
+      getVehicleParameters(),
+      traffic_simulator::entity::VehicleEntity::BuiltinBehavior::behaviorTree());
+    api_.spawn(
+      "pedestrian_spawn_with_behavior_tree",
+      api_.canonicalize(traffic_simulator::helper::constructLaneletPose(34741, 3, 0)),
+      getPedestrianParameters(),
+      traffic_simulator::entity::PedestrianEntity::BuiltinBehavior::behaviorTree());
   }
 };
+}  // namespace cpp_mock_scenarios
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions options;
-  auto component = std::make_shared<LoadDoNothingPlugin>(options);
+  auto component = std::make_shared<cpp_mock_scenarios::LoadDoNothingPluginScenario>(options);
   rclcpp::spin(component);
   rclcpp::shutdown();
   return 0;

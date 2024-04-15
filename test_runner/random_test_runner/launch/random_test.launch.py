@@ -29,41 +29,9 @@ from launch.events import Shutdown
 from launch.event_handlers import OnProcessExit
 from launch.actions import EmitEvent, RegisterEventHandler, OpaqueFunction
 from launch.actions.declare_launch_argument import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
-
-
-def architecture_types():
-    return ["awf/auto", "awf/universe", "awf/universe/20230906", "tier4/proposal"]
-
-
-def default_autoware_launch_package_of(architecture_type):
-    if architecture_type not in architecture_types():
-        raise KeyError(
-            f"architecture_type:={architecture_type.perform(context)} is not supported. Choose one of {architecture_types()}."
-        )
-
-    return {
-        "awf/auto": "scenario_simulator_launch",
-        "awf/universe": "autoware_launch",
-        "awf/universe/20230906": "autoware_launch",
-        "tier4/proposal": "autoware_launch",
-    }[architecture_type]
-
-
-def default_autoware_launch_file_of(architecture_type):
-    if architecture_type not in architecture_types():
-        raise KeyError(
-            f"architecture_type:={architecture_type.perform(context)} is not supported. Choose one of {architecture_types()}."
-        )
-
-    return {
-        "awf/auto": "autoware_auto.launch.py",
-        "awf/universe": "planning_simulator.launch.xml",
-        "awf/universe/20230906": "planning_simulator.launch.xml",
-        "tier4/proposal": "planning_simulator.launch.xml",
-    }[architecture_type]
-
+from launch.conditions import IfCondition
 
 class RandomTestRunnerLaunch(object):
     def __init__(self):
@@ -72,9 +40,11 @@ class RandomTestRunnerLaunch(object):
 
         self.autoware_launch_arguments = {
             # autoware arguments #
-            "architecture_type": {"default": "awf/auto", "description": "Autoware architecture type", "values": architecture_types()},
-            "sensor_model": {"default": "aip_xx1", "description": "Ego sensor model"},
-            "vehicle_model": {"default": "lexus", "description": "Ego vehicle model"},
+            "architecture_type": {"default": "awf/universe", "description": "Autoware architecture type", "values": "awf/universe"},
+            "sensor_model": {"default": "sample_sensor_kit", "description": "Ego sensor model"},
+            "vehicle_model": {"default": "sample_vehicle", "description": "Ego vehicle model"},
+            "autoware_launch_file": {"default": "planning_simulator.launch.xml", "description": "Launch file name for Autoware running"},
+            "autoware_launch_package": {"default": "autoware_launch", "description": "Launch file package name for Autoware running"},
         }
 
         self.random_test_arguments = {
@@ -83,14 +53,17 @@ class RandomTestRunnerLaunch(object):
                  "description": "Yaml filename within random_test_runner/param directory containing test parameters."
                                 "If specified (not empty), other test arguments will be ignored"},
             "simulator_type": {"default": "simple_sensor_simulator", "description": "Simulation backend",
-                               "values": ["simple_sensor_simulator", "unity"]},
+                               "values": ["simple_sensor_simulator", "awsim"]},
             "simulator_host":
                 {"default": "localhost",
                  "description": "Simulation host. It can be either IP address "
                                 "or the host name that is resolvable in the environment"},
 
+            "port": {"default": 8080, "description": "Simulation server port"},
+
             # control arguments #
             "test_count": {"default": 5, "description": "Test count to be performed in test suite"},
+            "test_timeout": {"default": 60.0, "description": "Timeout of the single test"},
             "input_dir":
                 {"default": "",
                  "description": "Directory containing the result.yaml file to be replayed. "
@@ -98,6 +71,8 @@ class RandomTestRunnerLaunch(object):
             "output_dir":
                 {"default": "/tmp",
                  "description": "Directory to which result.yaml and result.junit.xml files will be placed"},
+
+            "initialize_duration": {"default": 35, "description": "How long test runner will wait for Autoware to initialize"},
 
             # test suite arguments #
             "test_name": {"default": "random_test",
@@ -117,7 +92,7 @@ class RandomTestRunnerLaunch(object):
                                 "ego_goal_partial_randomization_distance value. If ego_goal_lanelet_id is set to -1, "
                                 "this value is ignored"},
             "ego_goal_partial_randomization_distance":
-                {"default": 20.0,
+                {"default": 25.0,
                  "description": "Distance from goal set by ego_goal_lanelet_id and ego_goal_s, within which goal "
                                 "pose will be randomized if ego_goal_partial_randomization is set to true"},
             "npc_count": {"default": 10, "description": "Generated npc count"},
@@ -177,8 +152,6 @@ class RandomTestRunnerLaunch(object):
         print("Autoware architecture '{}'".format(autoware_architecture))
 
         parameters = [self.autoware_launch_configuration,
-                      {"autoware_launch_package": default_autoware_launch_package_of(autoware_architecture),
-                       "autoware_launch_file": default_autoware_launch_file_of(autoware_architecture)},
                       self.random_test_runner_launch_configuration]
 
         if test_param_file:
@@ -206,9 +179,9 @@ class RandomTestRunnerLaunch(object):
 
         scenario_node = Node(
             package="random_test_runner",
-            executable="random_test_runner",
+            executable="random_test_runner_node",
             namespace="simulation",
-            name="random_test_runner",
+            name="random_test_runner_node",
             output="screen",
             arguments=[("__log_level:=info")],
             parameters=parameters
@@ -222,28 +195,28 @@ class RandomTestRunnerLaunch(object):
             scenario_node,
             RegisterEventHandler(event_handler=shutdown_handler),
             Node(
-                package="openscenario_visualization",
-                executable="openscenario_visualization_node",
+                package="traffic_simulator",
+                executable="visualization_node",
                 namespace="simulation",
-                name="openscenario_visualizer",
+                name="visualizer",
                 output="screen",
             ),
-        ]
-
-        simulation_type = self.random_test_runner_launch_configuration["simulator_type"].perform(context)
-        print("Chosen simulation type", simulation_type)
-        if simulation_type == "simple_sensor_simulator":
-            launch_description.append(
-                Node(
-                    package="simple_sensor_simulator",
-                    executable="simple_sensor_simulator_node",
-                    name="simple_sensor_simulator_node",
-                    namespace="simulation",
-                    output="log",
-                    arguments=[("__log_level:=warn")],
-                    parameters=[{"port": 8080}],
+            Node(
+                package="simple_sensor_simulator",
+                executable="simple_sensor_simulator_node",
+                name="simple_sensor_simulator_node",
+                namespace="simulation",
+                output="log",
+                arguments=[("__log_level:=warn")],
+                parameters=[{"port": 8080}],
+                condition=IfCondition(
+                    PythonExpression([
+                        "'", self.random_test_runner_launch_configuration["simulator_type"], "'",
+                        ' == "simple_sensor_simulator"'
+                    ])
                 ),
             )
+        ]
 
         return launch_description
 

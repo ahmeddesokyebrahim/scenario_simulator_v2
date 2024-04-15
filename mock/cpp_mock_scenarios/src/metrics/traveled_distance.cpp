@@ -15,22 +15,22 @@
 #include <quaternion_operation/quaternion_operation.h>
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <cmath>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
+#include <limits>
+#include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
 #include <traffic_simulator/api/api.hpp>
 #include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
+#include <vector>
 
 #include "rclcpp/logger.hpp"
 #include "rclcpp/logging.hpp"
 
-// headers in STL
-#include <cmath>
-#include <limits>
-#include <memory>
-#include <string>
-#include <vector>
-
+namespace cpp_mock_scenarios
+{
 class TraveledDistanceScenario : public cpp_mock_scenarios::CppScenarioNode
 {
 public:
@@ -72,12 +72,13 @@ private:
     api_.requestSpeedChange("ego", 3, true);
   }
 };
+}  // namespace cpp_mock_scenarios
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions options;
-  auto component = std::make_shared<TraveledDistanceScenario>(options);
+  auto component = std::make_shared<cpp_mock_scenarios::TraveledDistanceScenario>(options);
   rclcpp::spin(component);
   rclcpp::shutdown();
   return 0;

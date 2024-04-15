@@ -17,19 +17,19 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
+#include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
 #include <traffic_simulator/api/api.hpp>
 #include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
-
-// headers in STL
-#include <memory>
-#include <string>
 #include <vector>
 
-class LaneChangeLeftScenario : public cpp_mock_scenarios::CppScenarioNode
+namespace cpp_mock_scenarios
+{
+class LaneChangeLongitudinalDistanceScenario : public cpp_mock_scenarios::CppScenarioNode
 {
 public:
-  explicit LaneChangeLeftScenario(const rclcpp::NodeOptions & option)
+  explicit LaneChangeLongitudinalDistanceScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "lanechange_left", ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map",
       "lanelet2_map.osm", __FILE__, false, option)
@@ -63,12 +63,14 @@ private:
         traffic_simulator::lane_change::Constraint::Type::LONGITUDINAL_DISTANCE, 3.0));
   }
 };
+}  // namespace cpp_mock_scenarios
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions options;
-  auto component = std::make_shared<LaneChangeLeftScenario>(options);
+  auto component =
+    std::make_shared<cpp_mock_scenarios::LaneChangeLongitudinalDistanceScenario>(options);
   rclcpp::spin(component);
   rclcpp::shutdown();
   return 0;

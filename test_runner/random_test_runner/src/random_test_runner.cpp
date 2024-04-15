@@ -65,7 +65,6 @@ RandomTestRunner::RandomTestRunner(const rclcpp::NodeOptions & option)
 
   traffic_simulator::Configuration configuration(map_path);
   configuration.simulator_host = test_control_parameters.simulator_host;
-  api_ = std::make_shared<traffic_simulator::API>(this, configuration, 1.0, 20);
   auto lanelet_utils = std::make_shared<LaneletUtils>(configuration.lanelet2_map_path());
 
   TestSuiteParameters validated_params = validateParameters(test_suite_params, lanelet_utils);
@@ -89,12 +88,12 @@ RandomTestRunner::RandomTestRunner(const rclcpp::NodeOptions & option)
       fmt::format("Generating test {}/{}", test_id + 1, test_case_parameters_vector.size());
     RCLCPP_INFO_STREAM(get_logger(), message);
     test_executors_.emplace_back(
-      api_,
+      std::make_shared<traffic_simulator::API>(this, configuration, 1.0, 20),
       TestRandomizer(
         get_logger(), validated_params, test_case_parameters_vector[test_id], lanelet_utils)
         .generate(),
       error_reporter_.spawnTestCase(validated_params.name, std::to_string(test_id)),
-      test_control_parameters.simulator_type, test_control_parameters.architecture_type,
+      test_control_parameters.test_timeout, test_control_parameters.architecture_type,
       get_logger());
     yaml_test_params_saver.addTestCase(test_case_parameters_vector[test_id], validated_params.name);
   }
@@ -153,6 +152,11 @@ TestControlParameters RandomTestRunner::collectAndValidateTestControlParameters(
     throw std::runtime_error(fmt::format(
       "Output directory {} is empty, does not exists or is not a directory", tp.output_dir));
   }
+  tp.test_timeout = this->declare_parameter<double>("test_timeout", 60.0);
+  if (tp.test_timeout <= 0.0) {
+    throw std::runtime_error(
+      fmt::format("Test timeout cannot be 0.0 or negative. Currently is {}", tp.test_timeout));
+  }
 
   return tp;
 }
@@ -197,15 +201,8 @@ void RandomTestRunner::update()
     RCLCPP_INFO_STREAM(get_logger(), message);
     current_test_executor_->initialize();
   }
-  if (!api_->isEgoSpawned() && !api_->isNpcLogicStarted()) {
-    api_->startNpcLogic();
-  }
-  if (
-    api_->isEgoSpawned() && !api_->isNpcLogicStarted() &&
-    api_->asFieldOperatorApplication(api_->getEgoName()).engageable()) {
-    api_->startNpcLogic();
-  }
-  current_test_executor_->update(api_->getCurrentTime());
+
+  current_test_executor_->update();
 }
 
 void RandomTestRunner::start()

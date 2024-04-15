@@ -17,15 +17,13 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
+#include <memory>
 #include <random001_parameters.hpp>
+#include <random>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
 #include <traffic_simulator/api/api.hpp>
 #include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
-
-// headers in STL
-#include <memory>
-#include <random>
-#include <string>
 #include <vector>
 
 class RandomScenario : public cpp_mock_scenarios::CppScenarioNode
@@ -110,9 +108,9 @@ private:
 
   void onUpdate() override
   {
-    [&]() {
+    {
       if (param_listener_->is_old(params_)) {
-        /// When the parameter was updated, clear entity before re-spawing entity.
+        /// When the parameter was updated, clear entity before re-spawning entity.
         despawnRoadParkingVehicles();
         despawnCrossingPedestrians();
         param_listener_->refresh_dynamic_parameters();
@@ -120,7 +118,7 @@ private:
         /// Re-spawn road parking vehicle.
         spawnRoadParkingVehicles();
       }
-    }();
+    };
 
     const auto spawn_and_change_lane = [&](const auto & entity_name, const auto spawn_s_value) {
       if (!api_.entityExists(entity_name)) {
@@ -187,7 +185,7 @@ private:
       spawn_and_cross_pedestrian(i);
     }
 
-    [&]() {
+    {
       const auto trigger_position =
         api_.canonicalize(traffic_simulator::helper::constructLaneletPose(34621, 10, 0, 0, 0, 0));
       const auto entity_name = "spawn_nearby_ego";
@@ -204,7 +202,7 @@ private:
       if (!api_.reachPosition("ego", trigger_position, 20.0) && api_.entityExists(entity_name)) {
         api_.despawn(entity_name);
       }
-    }();
+    }
   }
   void onInitialize() override
   {

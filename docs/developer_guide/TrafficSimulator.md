@@ -8,14 +8,14 @@ Each NPC has a behavior tree and follows the user's commands.
 ## C++ API
 
 The traffic simulator provides C++ APIs to control the NPC behavior in simulation.
-You can also see the detailed documentation of the API classes [here](https://tier4.github.io/scenario_simulator_v2-docs/package/traffic_simulator/markdown/Classes/classtraffic__simulator_1_1API/).
+You can also see the detailed documentation of the API classes [here](https://tier4.github.io/scenario_simulator_v2-api-docs/classtraffic__simulator_1_1API.html).
 
 
 <iframe 
   class="hatenablogcard" 
   style="width:100%;height:155px;max-width:450px;" 
   title="embree" 
-  src="https://hatenablog-parts.com/embed?url=https://tier4.github.io/scenario_simulator_v2-docs/package/traffic_simulator/markdown/Classes/classtraffic__simulator_1_1API/" 
+  src="https://hatenablog-parts.com/embed?url=https://tier4.github.io/scenario_simulator_v2-api-docs/classtraffic__simulator_1_1API.html" 
   width="300" height="150" frameborder="0" scrolling="no">
 </iframe>
 
@@ -26,10 +26,7 @@ You can also see the detailed documentation of the API classes [here](https://ti
 #include <traffic_simulator/api/api.hpp>
 #include <quaternion_operation/quaternion_operation.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
-
 #include <rclcpp/rclcpp.hpp>
-
-// headers in STL
 #include <memory>
 #include <vector>
 #include <string>

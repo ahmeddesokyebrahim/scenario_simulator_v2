@@ -17,15 +17,15 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
+#include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <string>
 #include <traffic_simulator/api/api.hpp>
 #include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
-
-// headers in STL
-#include <memory>
-#include <string>
 #include <vector>
 
+namespace cpp_mock_scenarios
+{
 class LaneChangeLeftScenario : public cpp_mock_scenarios::CppScenarioNode
 {
 public:
@@ -61,12 +61,13 @@ private:
     api_.requestLaneChange("ego", traffic_simulator::lane_change::Direction::LEFT);
   }
 };
+}  // namespace cpp_mock_scenarios
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions options;
-  auto component = std::make_shared<LaneChangeLeftScenario>(options);
+  auto component = std::make_shared<cpp_mock_scenarios::LaneChangeLeftScenario>(options);
   rclcpp::spin(component);
   rclcpp::shutdown();
   return 0;
