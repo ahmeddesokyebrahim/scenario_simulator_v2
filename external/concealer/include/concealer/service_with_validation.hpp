@@ -102,6 +102,7 @@ public:
                           << (service_call_status.message.empty()
                                 ? "."
                                 : " (" + service_call_status.message + ")"));
+              return;
             }
           } else if constexpr (std::is_same_v<
                                  autoware_adapi_v1_msgs::msg::ResponseStatus,

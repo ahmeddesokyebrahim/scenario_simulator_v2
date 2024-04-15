@@ -331,8 +331,8 @@ auto FieldOperatorApplicationFor<AutowareUniverse>::plan(
       has_data_member_option_v<autoware_adapi_v1_msgs::srv::SetRoutePoints::Request> and
       has_data_member_allow_goal_modification_v<
         decltype(std::declval<autoware_adapi_v1_msgs::srv::SetRoutePoints::Request>().option)>) {
-      request->option.allow_goal_modification =
-        get_parameter("allow_goal_modification").get_value<bool>();
+      request->option.allow_goal_modification = true;
+        // get_parameter("allow_goal_modification").get_value<bool>();
     }
 
     request->goal = route.back().pose;
