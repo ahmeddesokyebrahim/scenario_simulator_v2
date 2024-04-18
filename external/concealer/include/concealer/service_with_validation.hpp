@@ -122,6 +122,7 @@ public:
                           << (service_call_status.message.empty()
                                 ? ""
                                 : " (" + service_call_status.message + ")"));
+              return;
             }
           } else {
             RCLCPP_INFO_STREAM(logger, service_name << " service request has been accepted.");
@@ -136,6 +137,7 @@ public:
               RCLCPP_ERROR_STREAM(
                 logger, service_name
                           << " service request has been accepted, but Response::success is false.");
+              return;
             }
           } else {
             RCLCPP_INFO_STREAM(logger, service_name << " service request has been accepted.");

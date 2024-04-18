@@ -309,6 +309,12 @@ auto FieldOperatorApplicationFor<AutowareUniverse>::plan(
   assert(not route.empty());
 
   task_queue.delay([this, route] {
+    auto request = std::make_shared<autoware_adapi_v1_msgs::srv::ClearRoute::Request>();
+
+    requestClearRoute(request);
+  });
+
+  task_queue.delay([this, route] {
     waitForAutowareStateToBeWaitingForRoute();  // NOTE: This is assertion.
 
     auto request = std::make_shared<autoware_adapi_v1_msgs::srv::SetRoutePoints::Request>();
