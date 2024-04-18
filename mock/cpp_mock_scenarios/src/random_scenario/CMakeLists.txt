@@ -7,6 +7,7 @@ ament_auto_add_executable(random001
   # random001.cpp
   random002-odaiba.cpp
 )
+
 target_link_libraries(random001
   cpp_scenario_node
   random001_parameters
@@ -15,8 +16,20 @@ target_include_directories(random001
   PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/random001_parameters/include
 )
 
+ament_auto_add_executable(random003
+  random003-bs.cpp
+)
+target_link_libraries(random003
+  cpp_scenario_node
+  random001_parameters
+)
+target_include_directories(random003
+  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/random001_parameters/include
+)
+
 install(TARGETS
   random001
+  random003
   DESTINATION lib/cpp_mock_scenarios
 )
 
