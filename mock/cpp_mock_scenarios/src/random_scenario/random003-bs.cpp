@@ -39,7 +39,7 @@ public:
   explicit RandomScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "random_sim_bs_stable", /* ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map" */
-      "/home/satoshi/workspace/bs_stable",
+      "/home/planning-control-developer/workspace/bs_stable",
       "lanelet2_map.osm", __FILE__, false, option),
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
     engine_(seed_gen_())
