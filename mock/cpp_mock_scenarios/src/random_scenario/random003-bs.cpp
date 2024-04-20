@@ -16,6 +16,7 @@
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
 #include <random001_parameters.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <traffic_simulator/api/api.hpp>
 
@@ -42,6 +43,7 @@ public:
       "/home/planning-control-developer/workspace/bs_stable",
       "lanelet2_map.osm", __FILE__, false, option),
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
+    capture_cli_(this->create_client<std_srvs::srv::Trigger>("/debug/service/capture_screen", rmw_qos_profile_default)),
     engine_(seed_gen_())
   {
     start();
@@ -49,6 +51,7 @@ public:
 
 private:
   std::shared_ptr<random001::ParamListener> param_listener_;
+  const rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr capture_cli_;
   random001::Params params_;
   std::random_device seed_gen_;
   std::mt19937 engine_;
@@ -347,12 +350,33 @@ private:
     setTlColor(opposite_traffic_right_ids, getOppositeTlColor(tl_color));
   }
 
+  template <typename T>
+  void callServiceWithoutResponse(const typename rclcpp::Client<T>::SharedPtr client)
+  {
+    auto req = std::make_shared<typename T::Request>();
+
+    // RCLCPP_DEBUG(raw_node_->get_logger(), "client request");
+
+    if (!client->service_is_ready()) {
+      // RCLCPP_DEBUG(raw_node_->get_logger(), "client is unavailable");
+      return;
+    }
+
+    client->async_send_request(req, [this](typename rclcpp::Client<T>::SharedFuture result) {
+      RCLCPP_DEBUG(
+        rclcpp::get_logger(__func__), "Status: %s", result.get()->message.c_str());
+    });
+  }
+
   bool processForEgoStuck() {
     constexpr auto STUCK_TIME_THRESHOLD = 10.0;
     const auto stuck_time = api_.getStandStillDuration("ego");
 
     // 10秒以上スタックしたら、NPC全消ししてflag true、タイマースタート。
     if (stuck_time > STUCK_TIME_THRESHOLD && !ego_is_in_stuck_) {
+      {
+        callServiceWithoutResponse<std_srvs::srv::Trigger>(capture_cli_);
+      }
       std::cerr << "\n\nEgo is in stuck. Remove all vehicles!!!\n\n" << std::endl;
       // api_.despawnEntities();
       auto entities = api_.getEntityNames();
