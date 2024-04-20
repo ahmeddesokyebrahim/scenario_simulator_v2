@@ -28,7 +28,6 @@
 #include <simulation_interface/conversions.hpp>
 #include <simulation_interface/zmq_multi_client.hpp>
 #include <std_msgs/msg/float64.hpp>
-#include <std_srvs/srv/trigger.hpp>
 #include <stdexcept>
 #include <string>
 #include <traffic_simulator/api/configuration.hpp>
@@ -91,7 +90,6 @@ public:
         }
       })),
     clock_(node->get_parameter("use_sim_time").as_bool(), std::forward<decltype(xs)>(xs)...),
-    capture_cli_(rclcpp::create_client<std_srvs::srv::Trigger>(node, "/simulator/stuck")),
     zeromq_client_(
       simulation_interface::protocol, configuration.simulator_host, getZMQSocketPort(*node))
   {
@@ -109,25 +107,6 @@ public:
         throw common::SimulationError("Failed to initialize simulator by InitializeRequest");
       }
     }
-  }
-
-  template <typename T>
-  void callServiceWithoutResponse(const typename rclcpp::Client<T>::SharedPtr client)
-  {
-    auto req = std::make_shared<typename T::Request>();
-
-    // RCLCPP_DEBUG(raw_node_->get_logger(), "client request");
-
-    if (!client->service_is_ready()) {
-      // RCLCPP_DEBUG(raw_node_->get_logger(), "client is unavailable");
-      return;
-    }
-
-    client->async_send_request(req, [this](typename rclcpp::Client<T>::SharedFuture result) {
-      // RCLCPP_DEBUG(
-      //   raw_node_->get_logger(), "Status: %d, %s", result.get()->status.code,
-      //   result.get()->status.message.c_str());
-    });
   }
 
   template <typename Node>
@@ -412,8 +391,6 @@ private:
   const rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr debug_marker_pub_;
 
   const rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr real_time_factor_subscriber;
-
-  const rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr capture_cli_;
 
   SimulationClock clock_;
 

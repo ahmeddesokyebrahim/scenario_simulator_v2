@@ -29,9 +29,6 @@ void API::setVerbose(const bool verbose) { entity_manager_ptr_->setVerbose(verbo
 
 bool API::despawn(const std::string & name)
 {
-  {
-    callServiceWithoutResponse<std_srvs::srv::Trigger>(capture_cli_);
-  }
   const auto result = entity_manager_ptr_->despawnEntity(name);
   if (!result) {
     return false;
