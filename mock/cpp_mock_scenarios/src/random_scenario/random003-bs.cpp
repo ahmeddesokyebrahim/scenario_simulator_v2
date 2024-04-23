@@ -43,7 +43,7 @@ public:
       "/home/planning-control-developer/workspace/bs_stable",
       "lanelet2_map.osm", __FILE__, false, option),
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
-    capture_cli_(this->create_client<std_srvs::srv::Trigger>("/debug/service/capture_screen", rmw_qos_profile_default)),
+    capture_cli_(this->create_client<std_srvs::srv::Trigger>("/debug/capture/screen_shot", rmw_qos_profile_default)),
     engine_(seed_gen_())
   {
     start();
