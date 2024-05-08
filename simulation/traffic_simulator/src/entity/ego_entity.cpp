@@ -79,9 +79,11 @@ auto EgoEntity::makeFieldOperatorApplication(const Configuration & configuration
 EgoEntity::EgoEntity(
   const std::string & name, const CanonicalizedEntityStatus & entity_status,
   const std::shared_ptr<hdmap_utils::HdMapUtils> & hdmap_utils_ptr,
+  const std::shared_ptr<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>> &
+    behavior_plugin_loader,
   const traffic_simulator_msgs::msg::VehicleParameters & parameters,
   const Configuration & configuration)
-: VehicleEntity(name, entity_status, hdmap_utils_ptr, parameters),
+: VehicleEntity(name, entity_status, hdmap_utils_ptr, behavior_plugin_loader, parameters),
   field_operator_application(makeFieldOperatorApplication(configuration))
 {
 }

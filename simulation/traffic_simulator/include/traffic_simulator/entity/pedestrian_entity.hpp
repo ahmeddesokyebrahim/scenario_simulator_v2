@@ -59,6 +59,7 @@ public:
   explicit PedestrianEntity(
     const std::string & name, const CanonicalizedEntityStatus &,
     const std::shared_ptr<hdmap_utils::HdMapUtils> &,
+    const std::shared_ptr<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>> &,
     const traffic_simulator_msgs::msg::PedestrianParameters &,
     const std::string & plugin_name = BuiltinBehavior::defaultBehavior());
 

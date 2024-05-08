@@ -20,8 +20,10 @@
 #include <concealer/field_operator_application.hpp>
 #include <memory>
 #include <optional>
+#include <pluginlib/class_loader.hpp>
 #include <queue>
 #include <string>
+#include <traffic_simulator/behavior/behavior_plugin_base.hpp>
 #include <traffic_simulator/behavior/follow_trajectory.hpp>
 #include <traffic_simulator/behavior/longitudinal_speed_planning.hpp>
 #include <traffic_simulator/data_type/entity_status.hpp>
@@ -41,7 +43,6 @@
 #include <unordered_map>
 #include <vector>
 #include <visualization_msgs/msg/marker_array.hpp>
-
 namespace traffic_simulator
 {
 namespace entity
@@ -51,7 +52,8 @@ class EntityBase
 public:
   explicit EntityBase(
     const std::string & name, const CanonicalizedEntityStatus &,
-    const std::shared_ptr<hdmap_utils::HdMapUtils> &);
+    const std::shared_ptr<hdmap_utils::HdMapUtils> &,
+    const std::shared_ptr<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>> &);
 
   virtual ~EntityBase() = default;
 
@@ -255,6 +257,10 @@ protected:
 
   std::shared_ptr<hdmap_utils::HdMapUtils> hdmap_utils_ptr_;
   std::shared_ptr<traffic_simulator::TrafficLightManager> traffic_light_manager_;
+
+  const std::shared_ptr<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>>
+    behavior_plugin_loader_;
+  const std::shared_ptr<entity_behavior::BehaviorPluginBase> behavior_plugin_ptr_;
 
   bool npc_logic_started_ = false;
   double stand_still_duration_ = 0.0;

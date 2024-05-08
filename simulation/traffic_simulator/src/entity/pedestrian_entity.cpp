@@ -27,14 +27,14 @@ namespace entity
 PedestrianEntity::PedestrianEntity(
   const std::string & name, const CanonicalizedEntityStatus & entity_status,
   const std::shared_ptr<hdmap_utils::HdMapUtils> & hdmap_utils_ptr,
+  const std::shared_ptr<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>> &
+    behavior_plugin_loader,
   const traffic_simulator_msgs::msg::PedestrianParameters & parameters,
   const std::string & plugin_name)
-: EntityBase(name, entity_status, hdmap_utils_ptr),
+: EntityBase(name, entity_status, hdmap_utils_ptr, behavior_plugin_loader),
   plugin_name(plugin_name),
   pedestrian_parameters(parameters),
-  loader_(pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>(
-    "traffic_simulator", "entity_behavior::BehaviorPluginBase")),
-  behavior_plugin_ptr_(loader_.createSharedInstance(plugin_name)),
+  behavior_plugin_ptr_(behavior_plugin_loader_->createSharedInstance(plugin_name)),
   route_planner_(hdmap_utils_ptr_)
 {
   behavior_plugin_ptr_->configure(rclcpp::get_logger(name));

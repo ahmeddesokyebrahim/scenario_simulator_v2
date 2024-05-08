@@ -29,6 +29,7 @@ public:
   explicit MiscObjectEntity(
     const std::string & name, const CanonicalizedEntityStatus &,
     const std::shared_ptr<hdmap_utils::HdMapUtils> &,
+    const std::shared_ptr<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>> &,
     const traffic_simulator_msgs::msg::MiscObjectParameters &);
 
   void onUpdate(double, double) override;

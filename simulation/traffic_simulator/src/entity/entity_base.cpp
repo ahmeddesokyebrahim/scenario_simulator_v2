@@ -29,12 +29,15 @@ namespace entity
 {
 EntityBase::EntityBase(
   const std::string & name, const CanonicalizedEntityStatus & entity_status,
-  const std::shared_ptr<hdmap_utils::HdMapUtils> & hdmap_utils_ptr)
+  const std::shared_ptr<hdmap_utils::HdMapUtils> & hdmap_utils_ptr,
+  const std::shared_ptr<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>> &
+    behavior_plugin_loader)
 : name(name),
   verbose(true),
   status_(entity_status),
   status_before_update_(status_),
   hdmap_utils_ptr_(hdmap_utils_ptr),
+  behavior_plugin_loader_(behavior_plugin_loader),
   npc_logic_started_(false)
 {
   if (name != static_cast<EntityStatus>(entity_status).name) {

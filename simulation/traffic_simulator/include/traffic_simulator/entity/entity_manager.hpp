@@ -119,6 +119,8 @@ class EntityManager
   const std::shared_ptr<TrafficLightPublisherBase> v2i_traffic_light_legacy_topic_publisher_ptr_;
   const std::shared_ptr<TrafficLightPublisherBase> v2i_traffic_light_publisher_ptr_;
   ConfigurableRateUpdater v2i_traffic_light_updater_, conventional_traffic_light_updater_;
+  std::shared_ptr<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>>
+    behavior_plugin_loader_;
 
 public:
   template <typename Node>
@@ -194,7 +196,10 @@ public:
           clock_ptr_->now(), v2i_traffic_light_manager_ptr_->generateUpdateTrafficLightsRequest());
       }),
     conventional_traffic_light_updater_(
-      node, [this]() { conventional_traffic_light_marker_publisher_ptr_->publish(); })
+      node, [this]() { conventional_traffic_light_marker_publisher_ptr_->publish(); }),
+    behavior_plugin_loader_(
+      std::make_shared<pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase>>(
+        "traffic_simulator", "entity_behavior::BehaviorPluginBase"))
   {
     updateHdmapMarker();
   }
@@ -580,7 +585,7 @@ public:
 
     if (const auto [iter, success] = entities_.emplace(
           name, std::make_unique<Entity>(
-                  name, makeEntityStatus(), hdmap_utils_ptr_, parameters,
+                  name, makeEntityStatus(), hdmap_utils_ptr_, behavior_plugin_loader_, parameters,
                   std::forward<decltype(xs)>(xs)...));
         success) {
       // FIXME: this ignores V2I traffic lights
