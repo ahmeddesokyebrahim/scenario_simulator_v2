@@ -125,7 +125,6 @@ public:
   const traffic_simulator_msgs::msg::PedestrianParameters pedestrian_parameters;
 
 private:
-  pluginlib::ClassLoader<entity_behavior::BehaviorPluginBase> loader_;
   const std::shared_ptr<entity_behavior::BehaviorPluginBase> behavior_plugin_ptr_;
   traffic_simulator::RoutePlanner route_planner_;
 };
