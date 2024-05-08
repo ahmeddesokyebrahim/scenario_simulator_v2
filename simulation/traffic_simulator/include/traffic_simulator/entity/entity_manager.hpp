@@ -85,6 +85,7 @@ class EntityManager
   Configuration configuration;
 
   std::shared_ptr<rclcpp::node_interfaces::NodeTopicsInterface> node_topics_interface;
+  std::shared_ptr<rclcpp::node_interfaces::NodeParametersInterface> node_parameters_interface;
 
   tf2_ros::StaticTransformBroadcaster broadcaster_;
   tf2_ros::TransformBroadcaster base_link_broadcaster_;
@@ -141,11 +142,20 @@ public:
     return origin;
   }
 
+  template <typename T>
+  auto getROS2Parameter(const std::string & name, const T & default_value)
+  {
+    if (!node_parameters_interface->has_parameter(name)) {
+      node_parameters_interface->declare_parameter(name, rclcpp::ParameterValue(default_value));
+    }
+    return node_parameters_interface->get_parameter(name).get_value<T>();
+  }
+
   template <typename... Ts>
   auto makeV2ITrafficLightPublisher(Ts &&... xs) -> std::shared_ptr<TrafficLightPublisherBase>
   {
     if (const auto architecture_type =
-          getParameter<std::string>("architecture_type", "awf/universe");
+          getROS2Parameter<std::string>("architecture_type", "awf/universe");
         architecture_type.find("awf/universe") != std::string::npos) {
       return std::make_shared<
         TrafficLightPublisher<autoware_perception_msgs::msg::TrafficSignalArray>>(
@@ -161,6 +171,7 @@ public:
   explicit EntityManager(NodeT && node, const Configuration & configuration)
   : configuration(configuration),
     node_topics_interface(rclcpp::node_interfaces::get_node_topics_interface(node)),
+    node_parameters_interface(rclcpp::node_interfaces::get_node_parameters_interface(node)),
     broadcaster_(node),
     base_link_broadcaster_(node),
     clock_ptr_(node->get_clock()),
@@ -569,7 +580,7 @@ public:
           entity_status.lanelet_pose = *lanelet_pose;
           entity_status.lanelet_pose_valid = true;
           /// @note fix z, roll and pitch to fitting to the lanelet
-          if (getParameter<bool>("consider_pose_by_road_slope", false)) {
+          if (getROS2Parameter<bool>("consider_pose_by_road_slope", false)) {
             entity_status.pose = hdmap_utils_ptr_->toMapPose(*lanelet_pose).pose;
           } else {
             entity_status.pose = pose;
