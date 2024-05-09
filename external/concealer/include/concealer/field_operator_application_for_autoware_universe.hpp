@@ -20,6 +20,7 @@
 #endif
 
 #include <autoware_adapi_v1_msgs/msg/mrm_state.hpp>
+#include <autoware_adapi_v1_msgs/srv/clear_route.hpp>
 #include <autoware_adapi_v1_msgs/srv/initialize_localization.hpp>
 #include <autoware_adapi_v1_msgs/srv/set_route_points.hpp>
 #include <autoware_adapi_v1_msgs/srv/clear_route.hpp>
@@ -65,6 +66,7 @@ class FieldOperatorApplicationFor<AutowareUniverse>
   SubscriberWrapper<tier4_planning_msgs::msg::Trajectory>                         getTrajectory;
   SubscriberWrapper<autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand>       getTurnIndicatorsCommandImpl;
 
+  ServiceWithValidation<autoware_adapi_v1_msgs::srv::ClearRoute>                  requestClearRoute;
   ServiceWithValidation<tier4_rtc_msgs::srv::CooperateCommands>                   requestCooperateCommands;
   ServiceWithValidation<tier4_external_api_msgs::srv::Engage>                     requestEngage;
   ServiceWithValidation<autoware_adapi_v1_msgs::srv::InitializeLocalization>      requestInitialPose;
@@ -122,8 +124,10 @@ public:
     getLocalizationState("/api/localization/initialization_state", *this),
 #endif
     getMrmState("/api/fail_safe/mrm_state", *this, [this](const auto & v) { receiveMrmState(v); }),
+    getPathWithLaneId("/planning/scenario_planning/lane_driving/behavior_planning/path_with_lane_id", *this),
     getTrajectory("/api/iv_msgs/planning/scenario_planning/trajectory", *this),
     getTurnIndicatorsCommandImpl("/control/command/turn_indicators_cmd", *this),
+    requestClearRoute("/api/routing/clear_route", *this),
     requestCooperateCommands("/api/external/set/rtc_commands", *this),
     requestEngage("/api/external/set/engage", *this),
     requestInitialPose("/api/localization/initialize", *this),
@@ -131,8 +135,7 @@ public:
     requestSetRoutePoints("/api/routing/set_route_points", *this, std::chrono::seconds(10)),
     requestClearRoute("/api/routing/clear_route", *this),
     requestSetRtcAutoMode("/api/external/set/rtc_auto_mode", *this),
-    requestSetVelocityLimit("/api/autoware/set/velocity_limit", *this),
-    getPathWithLaneId("/planning/scenario_planning/lane_driving/behavior_planning/path_with_lane_id", *this)
+    requestSetVelocityLimit("/api/autoware/set/velocity_limit", *this)
   // clang-format on
   {
   }
@@ -161,6 +164,8 @@ public:
   auto initialize(const geometry_msgs::msg::Pose &) -> void override;
 
   auto plan(const std::vector<geometry_msgs::msg::PoseStamped> &) -> void override;
+
+  auto clearRoute() -> void override;
 
   auto requestAutoModeForCooperation(const std::string &, bool) -> void override;
 

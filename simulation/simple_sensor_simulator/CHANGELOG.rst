@@ -2,6 +2,123 @@
 Changelog for package simple_sensor_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.15.0 (2024-04-18)
+-------------------
+* Merge branch 'master' into refactor/drop_workflow
+* Merge remote-tracking branch 'origin/master' into refactor/drop_workflow
+  # Conflicts:
+  #	test_runner/scenario_test_runner/config/workflow_example.yaml
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Contributors: Kotaro Yoshimoto
+
+1.16.0 (2024-05-09)
+-------------------
+* Merge pull request `#1198 <https://github.com/tier4/scenario_simulator_v2/issues/1198>`_ from tier4/feature/respawn-entity
+  Feature/respawn entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* fix(sss): missing adaptation change - get_parameter
+* ref(sss, concealer): apply requested PR changes - style
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* ref(traffic_simulator, respawn): apply requested PR changes
+* Merge branch 'master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin-ssh/master' into feature/respawn-entity
+* Reducing the execution time of EgoEntitySimulation::makeSimulationModel
+* Contributors: DMoszynski, Dawid Moszynski, Dawid Moszyński, Paweł Lech, Tatsuya Yamasaki
+
+1.15.7 (2024-05-09)
+-------------------
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into feature/speed_up_set_other_status
+* Merge remote-tracking branch 'origin/master' into feature/speed_up_set_other_status
+* Contributors: hakuturu583
+
+1.15.6 (2024-05-07)
+-------------------
+* Merge branch 'master' into feature/publish_scenario_frame
+* Merge remote-tracking branch 'origin/feature/publish_scenario_frame' into feature/publish_scenario_frame
+* Merge branch 'master' into feature/publish_scenario_frame
+* Contributors: Kotaro Yoshimoto, Masaya Kataoka, hakuturu583
+
+1.15.5 (2024-05-07)
+-------------------
+
+1.15.4 (2024-05-01)
+-------------------
+
+1.15.3 (2024-04-25)
+-------------------
+* Merge branch 'master' into fix/standstill-duration-for-miscobjects
+* Merge branch 'master' into fix/standstill-duration-for-miscobjects
+* Merge remote-tracking branch 'origin/master' into fix/standstill-duration-for-miscobjects
+* Contributors: Piotr Zyskowski
+
+1.15.2 (2024-04-23)
+-------------------
+* Merge branch 'master' into feature/update_default_architecture_type
+* Contributors: Masaya Kataoka
+
+1.15.1 (2024-04-18)
+-------------------
+* Merge pull request `#1227 <https://github.com/tier4/scenario_simulator_v2/issues/1227>`_ from tier4/fix/occluded-object-in-grid
+  Exclude LiDAR occluded object on OccupancyGrid
+* Merge branch 'master' into fix/occluded-object-in-grid
+* Bump version of scenario_simulator_v2 from version 1.14.1 to version 1.15.0
+* Merge branch 'master' into fix/occluded-object-in-grid
+* Merge branch 'master' into refactor/drop_workflow
+* Merge remote-tracking branch 'origin/master' into refactor/drop_workflow
+  # Conflicts:
+  #	test_runner/scenario_test_runner/config/workflow_example.yaml
+* Fix spell
+* Exclude LiDAR occluded object from OccupancyGrid in simple_sensor_simulator
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Contributors: Kotaro Yoshimoto, Masaya Kataoka, f0reachARR, hakuturu583, ぐるぐる
+
+1.14.1 (2024-04-12)
+-------------------
+
+1.14.0 (2024-04-12)
+-------------------
+
+1.13.0 (2024-04-11)
+-------------------
+* Merge remote-tracking branch 'origin/feature/routing-algorithm' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/feature/routing-algorithm' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Contributors: Kotaro Yoshimoto, yamacir-kit
+
+1.12.0 (2024-04-10)
+-------------------
+* Merge branch 'master' into feature/user-defined-controller
+* Merge branch 'master' into feature/user-defined-controller
+* Merge remote-tracking branch 'origin/master' into feature/user-defined-controller
+* Contributors: Tatsuya Yamasaki, yamacir-kit
+
 1.11.3 (2024-04-09)
 -------------------
 * Merge branch 'master' into refactor/basic_types

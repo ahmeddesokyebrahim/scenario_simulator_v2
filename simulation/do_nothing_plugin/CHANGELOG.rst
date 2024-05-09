@@ -2,6 +2,117 @@
 Changelog for package do_nothing_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.15.0 (2024-04-18)
+-------------------
+* Merge branch 'master' into refactor/drop_workflow
+* Merge remote-tracking branch 'origin/master' into refactor/drop_workflow
+  # Conflicts:
+  #	test_runner/scenario_test_runner/config/workflow_example.yaml
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Contributors: Kotaro Yoshimoto
+
+1.16.0 (2024-05-09)
+-------------------
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin-ssh/master' into feature/respawn-entity
+* Contributors: DMoszynski, Dawid Moszyński, Paweł Lech, Tatsuya Yamasaki
+
+1.15.7 (2024-05-09)
+-------------------
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into feature/speed_up_set_other_status
+* Merge remote-tracking branch 'origin/master' into feature/speed_up_set_other_status
+* Revert "remove entity status type"
+  This reverts commit 17b871e35d689cb23eb4ffd1d16dbaaeade40370.
+* remove entity status type
+* Contributors: hakuturu583
+
+1.15.6 (2024-05-07)
+-------------------
+* Merge branch 'master' into feature/publish_scenario_frame
+* Merge remote-tracking branch 'origin/feature/publish_scenario_frame' into feature/publish_scenario_frame
+* Merge branch 'master' into feature/publish_scenario_frame
+* Contributors: Kotaro Yoshimoto, Masaya Kataoka, hakuturu583
+
+1.15.5 (2024-05-07)
+-------------------
+
+1.15.4 (2024-05-01)
+-------------------
+
+1.15.3 (2024-04-25)
+-------------------
+* Merge branch 'master' into fix/standstill-duration-for-miscobjects
+* Merge branch 'master' into fix/standstill-duration-for-miscobjects
+* Merge remote-tracking branch 'origin/master' into fix/standstill-duration-for-miscobjects
+* Merge remote-tracking branch 'origin/master' into fix/standstill-duration-for-miscobjects
+* Contributors: Piotr Zyskowski
+
+1.15.2 (2024-04-23)
+-------------------
+* Merge branch 'master' into feature/update_default_architecture_type
+* Contributors: Masaya Kataoka
+
+1.15.1 (2024-04-18)
+-------------------
+* Merge branch 'master' into fix/occluded-object-in-grid
+* Bump version of scenario_simulator_v2 from version 1.14.1 to version 1.15.0
+* Merge branch 'master' into fix/occluded-object-in-grid
+* Merge branch 'master' into refactor/drop_workflow
+* Merge remote-tracking branch 'origin/master' into refactor/drop_workflow
+  # Conflicts:
+  #	test_runner/scenario_test_runner/config/workflow_example.yaml
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Contributors: Kotaro Yoshimoto, hakuturu583, ぐるぐる
+
+1.14.1 (2024-04-12)
+-------------------
+
+1.14.0 (2024-04-12)
+-------------------
+* Merge pull request `#1229 <https://github.com/tier4/scenario_simulator_v2/issues/1229>`_ from tier4/feature/follow_trajectory_action_in_do_nothing_plugin
+  add follow trajectory action in do_nothing_plugin
+* add follow trajectory action in do_nothing_plugin
+* Contributors: Masaya Kataoka, Tatsuya Yamasaki
+
+1.13.0 (2024-04-11)
+-------------------
+* Merge remote-tracking branch 'origin/feature/routing-algorithm' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/feature/routing-algorithm' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Contributors: Kotaro Yoshimoto, yamacir-kit
+
+1.12.0 (2024-04-10)
+-------------------
+* Merge branch 'master' into feature/user-defined-controller
+* Merge branch 'master' into feature/user-defined-controller
+* Merge remote-tracking branch 'origin/master' into feature/user-defined-controller
+* Contributors: Tatsuya Yamasaki, yamacir-kit
+
 1.11.3 (2024-04-09)
 -------------------
 * Merge branch 'master' into refactor/basic_types

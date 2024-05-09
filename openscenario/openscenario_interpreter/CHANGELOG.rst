@@ -2,6 +2,153 @@
 Changelog for package openscenario_interpreter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.15.0 (2024-04-18)
+-------------------
+* Merge branch 'master' into refactor/drop_workflow
+* Merge remote-tracking branch 'origin/master' into refactor/drop_workflow
+  # Conflicts:
+  #	test_runner/scenario_test_runner/config/workflow_example.yaml
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Contributors: Kotaro Yoshimoto
+
+1.16.0 (2024-05-09)
+-------------------
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge branch 'master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin/master' into feature/respawn-entity
+* Merge remote-tracking branch 'origin-ssh/master' into feature/respawn-entity
+* Contributors: DMoszynski, Dawid Moszyński, Paweł Lech, Tatsuya Yamasaki
+
+1.15.7 (2024-05-09)
+-------------------
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into feature/speed_up_set_other_status
+* Merge remote-tracking branch 'origin/master' into feature/speed_up_set_other_status
+* Contributors: hakuturu583
+
+1.15.6 (2024-05-07)
+-------------------
+* Merge branch 'master' into feature/publish_scenario_frame
+* comment in publishCurrentContext();
+* Merge remote-tracking branch 'origin/feature/publish_scenario_frame' into feature/publish_scenario_frame
+* use getEgoName function in broadcastEntityTransform function
+* Merge branch 'master' into feature/publish_scenario_frame
+* comment in publishCurrentContext function
+* fix launch
+* enable publish context
+* fix frame_id of visualization
+* Contributors: Kotaro Yoshimoto, Masaya Kataoka, hakuturu583
+
+1.15.5 (2024-05-07)
+-------------------
+
+1.15.4 (2024-05-01)
+-------------------
+
+1.15.3 (2024-04-25)
+-------------------
+* Merge branch 'master' into fix/standstill-duration-for-miscobjects
+* Merge branch 'master' into fix/standstill-duration-for-miscobjects
+* Merge remote-tracking branch 'origin/master' into fix/standstill-duration-for-miscobjects
+* Merge remote-tracking branch 'origin/master' into fix/standstill-duration-for-miscobjects
+* Contributors: Piotr Zyskowski
+
+1.15.2 (2024-04-23)
+-------------------
+* Merge branch 'master' into feature/update_default_architecture_type
+* Contributors: Masaya Kataoka
+
+1.15.1 (2024-04-18)
+-------------------
+* Merge branch 'master' into fix/occluded-object-in-grid
+* Bump version of scenario_simulator_v2 from version 1.14.1 to version 1.15.0
+* Merge branch 'master' into fix/occluded-object-in-grid
+* Merge branch 'master' into refactor/drop_workflow
+* Merge remote-tracking branch 'origin/master' into refactor/drop_workflow
+  # Conflicts:
+  #	test_runner/scenario_test_runner/config/workflow_example.yaml
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Merge branch 'master' into refactor/drop_workflow
+* Contributors: Kotaro Yoshimoto, hakuturu583, ぐるぐる
+
+1.14.1 (2024-04-12)
+-------------------
+
+1.14.0 (2024-04-12)
+-------------------
+
+1.13.0 (2024-04-11)
+-------------------
+* Merge pull request `#1216 <https://github.com/tier4/scenario_simulator_v2/issues/1216>`_ from tier4/feature/routing-algorithm
+  Implement `DistanceCondition` / `RelativeDistanceCondition` for `shortest` of `RoutingAlgorithm`
+* Merge remote-tracking branch 'origin/feature/routing-algorithm' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/feature/routing-algorithm' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/routing-algorithm
+* Merge branch 'master' into feature/routing-algorithm
+* fix: perform `std::abs` to longitudinal distance with shortest routing algorithm
+* feat: implement makeNativeBoundingBoxRelativeLanePosition for shortest routing algorithm
+* fix: perform `std::abs` to lateral distance with shortest routing algorithm
+* feat: implement getLateralDistance with lane change
+* Merge branch 'master' into feature/routing-algorithm
+* doc(openscenario_interpreter): update standard annotation
+* feat(traffic_simulator): switch allow_lane_change option for longitudinal distance by routing algorithm
+* feat(openscenario_interpreter): implement (Relative)DistanceCondition with relative lane position makeing functions for shortest routing algorithm
+* feat(openscenario_interpreter): add routing_algorithm option to relative lane position making functions
+* feat(openscenario_interpreter): add empty implementation of (Relative)DistanceCondition for shortest routing algorithm
+* Merge remote-tracking branch 'origin/master' into feature/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Merge remote-tracking branch 'origin/master' into feature/interpreter/routing-algorithm
+* Add `RoutingAlgorithm::value_type` to template parameter of distance
+* Add `RoutingAlgorithm::value_type` to template parameter of `distance`
+* Update `RelativeDistanceCondition` to read attribute `routingAlgorithm`
+* Update `DistanceCondition` to read attribute `RoutingAlgorithm`
+* Add new struct `RoutingAlgorithm`
+* Lipsticks
+* Contributors: Kotaro Yoshimoto, Masaya Kataoka, yamacir-kit
+
+1.12.0 (2024-04-10)
+-------------------
+* Merge pull request `#1222 <https://github.com/tier4/scenario_simulator_v2/issues/1222>`_ from tier4/feature/user-defined-controller
+  Feature/user defined controller
+* Merge branch 'master' into feature/user-defined-controller
+* Merge branch 'master' into feature/user-defined-controller
+* Merge branch 'master' into feature/user-defined-controller
+* Merge remote-tracking branch 'origin/master' into feature/user-defined-controller
+* Update sample scenarios to specify controller name
+* Remove member function template `Controller::of<T>`
+* Update member function `Controller::isAutoware`
+* Remove unused static data member `ego_count`
+* Add new member function template `Controller::of<T>`
+* Rename `Controller::isUserDefinedController` to `isAutoware`
+* Contributors: Masaya Kataoka, Tatsuya Yamasaki, yamacir-kit
+
 1.11.3 (2024-04-09)
 -------------------
 * Merge pull request `#1220 <https://github.com/tier4/scenario_simulator_v2/issues/1220>`_ from tier4/refactor/basic_types
