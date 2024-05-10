@@ -16,6 +16,14 @@ Changelog for package embree_vendor
 * Merge branch 'master' into refactor/drop_workflow
 * Contributors: Kotaro Yoshimoto
 
+1.16.2 (2024-05-10)
+-------------------
+
+1.16.1 (2024-05-10)
+-------------------
+* Merge branch 'master' into doc/support_awesome-pages
+* Contributors: Taiga
+
 1.16.0 (2024-05-09)
 -------------------
 * Merge branch 'master' into feature/respawn-entity
