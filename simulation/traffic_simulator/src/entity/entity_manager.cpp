@@ -39,41 +39,12 @@ namespace entity
 void EntityManager::broadcastEntityTransform()
 {
   std::vector<std::string> names = getEntityNames();
-  /**
-   * @note This part of the process is intended to ensure that frames are issued in a position that makes 
-   * it as easy as possible to see the entities that will appear in the scenario.
-   * In the past, we used to publish the frames of all entities, but that would be too heavy processing, 
-   * so we publish the average of the coordinates of all entities.
-   */
-  if (isEgoSpawned()) {
-    const auto ego_name = getEgoName();
-    if (entityExists(ego_name)) {
-      broadcastTransform(
-        geometry_msgs::build<geometry_msgs::msg::PoseStamped>()
-          /**
-           * @note This is the intended implementation. 
-           * It is easier to create rviz config if the name “ego” is fixed, 
-           * so the frame_id “ego” is issued regardless of the name of the ego entity.
-           */
-          .header(std_msgs::build<std_msgs::msg::Header>().stamp(clock_ptr_->now()).frame_id("ego"))
-          .pose(getMapPose(ego_name)),
-        true);
-    }
-  }
-  if (!names.empty()) {
-    broadcastTransform(
-      geometry_msgs::build<geometry_msgs::msg::PoseStamped>()
-        .header(
-          std_msgs::build<std_msgs::msg::Header>().stamp(clock_ptr_->now()).frame_id("entities"))
-        .pose(geometry_msgs::build<geometry_msgs::msg::Pose>()
-                .position(std::accumulate(
-                  names.begin(), names.end(), geometry_msgs::msg::Point(),
-                  [this, names](geometry_msgs::msg::Point & point, const std::string & name) {
-                    return point +
-                           (getMapPose(name).position * (1.0 / static_cast<double>(names.size())));
-                  }))
-                .orientation(geometry_msgs::msg::Quaternion())),
-      true);
+  for (const auto & name : names) {
+    geometry_msgs::msg::PoseStamped pose;
+    pose.pose = getMapPose(name);
+    pose.header.stamp = clock_ptr_->now();
+    pose.header.frame_id = name;
+    broadcastTransform(pose);
   }
 }
 
@@ -444,17 +415,19 @@ auto EntityManager::getLongitudinalDistance(
     }
   } else {
     /**
-    * @brief hard coded parameter!! 5.0 is a matching distance of the toLaneletPoses function.
-    * A matching distance of about 1.5 lane widths is given as the matching distance to match the Entity present on the adjacent Lanelet.
-    */
+     * @brief hard coded parameter!! 5.0 is a matching distance of the toLaneletPoses function.
+     * A matching distance of about 1.5 lane widths is given as the matching distance to match the
+     * Entity present on the adjacent Lanelet.
+     */
     auto from_poses = hdmap_utils_ptr_->toLaneletPoses(
       static_cast<geometry_msgs::msg::Pose>(from), static_cast<LaneletPose>(from).lanelet_id, 5.0,
       include_opposite_direction);
     from_poses.emplace_back(from);
     /**
-    * @brief hard coded parameter!! 5.0 is a matching distance of the toLaneletPoses function.
-    * A matching distance of about 1.5 lane widths is given as the matching distance to match the Entity present on the adjacent Lanelet.
-    */
+     * @brief hard coded parameter!! 5.0 is a matching distance of the toLaneletPoses function.
+     * A matching distance of about 1.5 lane widths is given as the matching distance to match the
+     * Entity present on the adjacent Lanelet.
+     */
     auto to_poses = hdmap_utils_ptr_->toLaneletPoses(
       static_cast<geometry_msgs::msg::Pose>(to), static_cast<LaneletPose>(to).lanelet_id, 5.0,
       include_opposite_direction);
