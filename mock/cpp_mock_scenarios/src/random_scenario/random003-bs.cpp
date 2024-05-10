@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <quaternion_operation/quaternion_operation.h>
+
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
 #include <random001_parameters.hpp>
-#include <std_srvs/srv/trigger.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <traffic_simulator/api/api.hpp>
-
-#include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
 #include <traffic_simulator/helper/stop_watch.hpp>
+#include <traffic_simulator_msgs/msg/behavior_parameter.hpp>
 
-#include <quaternion_operation/quaternion_operation.h>
 #include "./random_util.hpp"
 
 // headers in STL
+#include <cstdlib>
+#include <ctime>
 #include <memory>
 #include <random>
 #include <string>
 #include <vector>
-#include <cstdlib>
-#include <ctime>
 
 class RandomScenario : public cpp_mock_scenarios::CppScenarioNode
 {
@@ -40,10 +40,11 @@ public:
   explicit RandomScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
       "random_sim_bs_stable", /* ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map" */
-      "/home/planning-control-developer/workspace/bs_stable",
-      "lanelet2_map.osm", __FILE__, false, option),
+      "/home/planning-control-developer/workspace/bs_stable", "lanelet2_map.osm", __FILE__, false,
+      option),
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
-    capture_cli_(this->create_client<std_srvs::srv::Trigger>("/debug/capture/screen_shot", rmw_qos_profile_default)),
+    capture_cli_(this->create_client<std_srvs::srv::Trigger>(
+      "/debug/capture/screen_shot", rmw_qos_profile_default)),
     engine_(seed_gen_())
   {
     start();
@@ -99,8 +100,9 @@ private:
     };
 
     constexpr auto untrigger_distance = 220.0;  // must be longer than trigger_distance
-    constexpr auto trigger_distance = 200.0;  // must be shorter than untrigger_distance
-    constexpr auto too_close_for_trigger_distance = 50.0;  // must be shorter than untrigger_distance
+    constexpr auto trigger_distance = 200.0;    // must be shorter than untrigger_distance
+    constexpr auto too_close_for_trigger_distance =
+      50.0;  // must be shorter than untrigger_distance
     const auto target_lane = api_.canonicalize(constructLaneletPose(lane_id, 0.0));
 
     const bool already_exist = api_.entityExists(entity_name_prefix + "_0");
@@ -170,13 +172,12 @@ private:
           api_.despawn(entity_name);
         }
       }
-
     }
   }
 
   void spawnAndChangeLane(
-    const std::string & entity_name, const LaneletPose & spawn_pose, const lanelet::Id & lane_change_id,
-    const Direction & lane_change_direction)
+    const std::string & entity_name, const LaneletPose & spawn_pose,
+    const lanelet::Id & lane_change_id, const Direction & lane_change_direction)
   {
     const auto & p = params_.random_parameters.lane_following_vehicle;
     if (!api_.entityExists(entity_name)) {
@@ -225,12 +226,13 @@ private:
 
     constexpr double reach_tolerance = 2.0;
     if (api_.reachPosition(entity_name, api_.canonicalize(goal_pose), reach_tolerance)) {
-        api_.despawn(entity_name);
+      api_.despawn(entity_name);
     }
   }
 
-
-  void spawnRoadParkingVehicles(const lanelet::Id & spawn_lanelet_id, const size_t number_of_vehicles, const DIRECTION direction)
+  void spawnRoadParkingVehicles(
+    const lanelet::Id & spawn_lanelet_id, const size_t number_of_vehicles,
+    const DIRECTION direction)
   {
     const std::string entity_name_prefix = "road_parking_" + std::to_string(spawn_lanelet_id);
     if (!removeFarNPCsAndCheckIsInTriggerDistance(entity_name_prefix, spawn_lanelet_id)) {
@@ -255,7 +257,6 @@ private:
     }();
 
     std::cerr << "object type = " << object_type << std::endl;
-
 
     const auto spawn_road_parking_vehicle = [&](const auto & entity_index, const auto offset) {
       const std::string entity_name = entity_name_prefix + "_" + std::to_string(entity_index);
@@ -283,7 +284,6 @@ private:
         return {-1.5, -3.0};
       }
     }();
-
 
     std::uniform_real_distribution<> dist(min_offset, max_offset);
     for (size_t i = 0; i < number_of_vehicles; i++) {
@@ -363,12 +363,12 @@ private:
     }
 
     client->async_send_request(req, [this](typename rclcpp::Client<T>::SharedFuture result) {
-      RCLCPP_DEBUG(
-        rclcpp::get_logger(__func__), "Status: %s", result.get()->message.c_str());
+      RCLCPP_DEBUG(rclcpp::get_logger(__func__), "Status: %s", result.get()->message.c_str());
     });
   }
 
-  bool processForEgoStuck() {
+  bool processForEgoStuck()
+  {
     constexpr auto STUCK_TIME_THRESHOLD = 10.0;
     const auto stuck_time = api_.getStandStillDuration("ego");
 
@@ -429,23 +429,23 @@ private:
     const auto stuck_time = api_.getStandStillDuration("ego");
     const bool ego_is_in_stop = stuck_time > 5.0;
     if (ego_is_in_stop && driving_to_destination_) {
-      const auto reach_target_lane =
-        std::any_of(goal_no1_candidate_ids_.begin(), goal_no1_candidate_ids_.end(), [&, this](const auto & id){
-    	  const auto target_lane = api_.canonicalize(constructLaneletPose(id, 5.0));
+      const auto reach_target_lane = std::any_of(
+        goal_no1_candidate_ids_.begin(), goal_no1_candidate_ids_.end(), [&, this](const auto & id) {
+          const auto target_lane = api_.canonicalize(constructLaneletPose(id, 5.0));
           return api_.reachPosition("ego", target_lane, reach_tolerance);
           // return api_.isInLanelet("ego", id, 5.0);
-          });
-      if(reach_target_lane) {
+        });
+      if (reach_target_lane) {
         updateRoute(route_to_start_lane_ids_);
         driving_to_destination_ = false;
       }
     } else if (ego_is_in_stop && !driving_to_destination_) {
-      const auto reach_target_lane =
-        std::any_of(goal_no2_candidate_ids_.begin(), goal_no2_candidate_ids_.end(), [&, this](const auto & id){
-    	  const auto target_lane = api_.canonicalize(constructLaneletPose(id, 5.0));
+      const auto reach_target_lane = std::any_of(
+        goal_no2_candidate_ids_.begin(), goal_no2_candidate_ids_.end(), [&, this](const auto & id) {
+          const auto target_lane = api_.canonicalize(constructLaneletPose(id, 5.0));
           return api_.reachPosition("ego", target_lane, reach_tolerance);
           // return api_.isInLanelet("ego", id, 5.0);
-          });
+        });
       if (reach_target_lane) {
         updateRoute(route_to_destination_ids_);
         driving_to_destination_ = true;
@@ -466,9 +466,7 @@ private:
     spawnRoadParkingVehicles(37, randomInt(0, 2), DIRECTION::LEFT);  // unstable
     spawnRoadParkingVehicles(8022, randomInt(0, 2), DIRECTION::VERY_RIGHT);
     spawnRoadParkingVehicles(39, randomInt(0, 2), DIRECTION::VERY_LEFT);  // stuck多し
-    
-    
-    
+
     // // 目的レーンまで動く移動物体を生成
     spawnAndMoveToGoal(97, 62, MIN_VEL, MAX_VEL);
     spawnAndMoveToGoal(8017, 57, MIN_VEL, MAX_VEL);
@@ -482,7 +480,7 @@ private:
     // spawnAndMoveToGoal(34, 40, MIN_VEL, MAX_VEL);
     // spawnAndMoveToGoal(1314, 41, MIN_VEL, MAX_VEL);
     // spawnAndMoveToGoal(94, 41, MIN_VEL, MAX_VEL);
-    
+
     // spawnAndMoveToGoal(175378, 174994, MIN_VEL, MAX_VEL);
     // spawnAndMoveToGoal(1263, 106, MIN_VEL, MAX_VEL);
     // spawnAndMoveToGoal(1265, 178001, MIN_VEL, MAX_VEL);
@@ -493,7 +491,6 @@ private:
     // spawnAndMoveToGoal(75, 83, MIN_VEL, MAX_VEL);
     // spawnAndMoveToGoal(75, 178573, MIN_VEL, MAX_VEL);
     // spawnAndMoveToGoal(1483, 1500, MIN_VEL, MAX_VEL);
-
 
     // // 信号機の情報を変更
     // updateRandomTrafficLightColor({10584}, {10589}, tl_state_manager_.getCurrentState());
@@ -509,7 +506,6 @@ private:
     // updateRandomTrafficLightColor({10610, 10598}, {10604}, tl_state_manager_.getCurrentState());
     // updateRandomTrafficLightColor({10342}, {10343}, tl_state_manager_.getCurrentState());
 
-    
     // 横断歩道歩行者をspawn（速度は毎回ランダム、人数はspawnで抽選、数秒ごとにspawnを止める）
     // spawnAndCrossPedestrian(3, 1561, 1561);
     // spawnAndCrossPedestrian(3, 1621, 1621);
@@ -524,7 +520,6 @@ private:
     // spawnAndCrossPedestrian(2, 1628, 1628);
     // spawnAndCrossPedestrian(10, 1567, 1567);
 
-
     // NPCを出力させてLCする
     // if (api_.isInLanelet("ego", 34684, 0.1)) {
     //   spawnAndChangeLane(
@@ -533,7 +528,6 @@ private:
 
     // 自己位置の相対位置にnpcを配置
     // spawnAndDespawnRelativeFromEgoInRange(34621, 10.0, 20.0, 10.0, -5.0);
-
   }
 
   void onInitialize() override
@@ -546,7 +540,8 @@ private:
 
     // 初期値とゴールを設定。初期値は一度しか指定できない。ゴールは何度も指定できるが、Rvizから指定した方が早そう。
     // 路肩からの発進時に同じノード名で複数ノードが起動されてしまいautowareが発信できなくなってしまうエラーがあるため、duplicated_node_checkerを無効化する必要あり。
-    const auto spawn_pose = api_.canonicalize(constructLaneletPose(start_lane_id_, 5.0, 0, 0, 0, 0));
+    const auto spawn_pose =
+      api_.canonicalize(constructLaneletPose(start_lane_id_, 5.0, 0, 0, 0, 0));
     const auto goal_poses = [&](const std::vector<lanelet::Id> lane_ids) {
       std::vector<traffic_simulator::CanonicalizedLaneletPose> poses;
       for (const auto id : lane_ids) {
@@ -555,7 +550,6 @@ private:
       return poses;
     }(route_to_destination_ids_);  // 最後がゴール、その前は並び順でcheck point
     spawnEgoEntity(spawn_pose, goal_poses, getVehicleParameters());
-
   }
 };
 

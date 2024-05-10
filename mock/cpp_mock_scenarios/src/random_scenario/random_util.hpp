@@ -1,24 +1,15 @@
-#include <traffic_simulator/api/api.hpp>
-
-#include <memory>
 #include <chrono>
-#include <vector>
+#include <memory>
 #include <string>
+#include <traffic_simulator/api/api.hpp>
+#include <vector>
 
 using traffic_simulator::LaneletPose;
 using traffic_simulator::helper::constructLaneletPose;
 using traffic_simulator::lane_change::Direction;
 using TLColor = traffic_simulator::TrafficLight::Color::Value;
 
-
-
-enum class DIRECTION {
-  CENTER,
-  LEFT,
-  RIGHT,
-  VERY_LEFT,
-  VERY_RIGHT
-};
+enum class DIRECTION { CENTER, LEFT, RIGHT, VERY_LEFT, VERY_RIGHT };
 
 template <typename StateType>
 class StateManager
@@ -74,7 +65,6 @@ public:
   }
 };
 
-
 uint8_t get_entity_subtype(const std::string & entity_type)
 {
   using traffic_simulator_msgs::msg::EntitySubtype;
@@ -113,7 +103,8 @@ double randomDouble(double min, double max)
   return min + (rand() / div);
 }
 
-std::string getOppositeTlColor(const std::string & color){
+std::string getOppositeTlColor(const std::string & color)
+{
   if (color == "red") return "green";
   if (color == "amber") return "red";
   if (color == "green") return "red";
