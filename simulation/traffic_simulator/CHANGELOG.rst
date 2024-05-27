@@ -13,6 +13,111 @@ Changelog for package traffic_simulator
 * Merge branch 'master' into refactor/drop_workflow
 * Contributors: Kotaro Yoshimoto
 
+1.18.0 (2024-05-24)
+-------------------
+* Merge pull request `#1231 <https://github.com/tier4/scenario_simulator_v2/issues/1231>`_ from tier4/feature/traffic-source
+  Feature/traffic source
+* Merge branch 'master' into feature/traffic-source
+* Merge branch 'master' into feature/traffic-source
+* Merge remote-tracking branch 'origin/master' into feature/traffic-source
+* Add comment explaining the possibly undesirable behavior
+* Add comment explaining the issue
+* Change lanelet fitting behavior in TrafficSource
+  Enable footprint fitting to many lanelets. This allows positions on the boundary of two lanelets one after another
+* Apply patched changes
+* Merge branch 'master' into feature/traffic-source
+* Rename unknown variables and functions for spell-check test
+* Add API comment
+* Optimize polygon search
+  Add first search from starting lanelets which improves performance
+* Add debugging function
+* Fix polygon search
+* Change algorithm to less greedy
+* Correct redundant areas removal algorithm
+* Fix compile error
+* Add disable option to SpawnPoseValidator
+* Prevent loops
+* Fix style in TrafficSource
+* First attempt at behavior and model3d support for TrafficSimulator
+* Clean TrafficSource code
+* Fix style
+* Fix getNearbyLaneletIds not filtering out crosswalks
+* Enable footprint fitting before spawning
+  The solution has been optimized for a high rates, meaning combined lane polygons are precomputed when TrafficSource is added and when validating a spawn pose the polygons are only accessed
+* Add require footprint fitting to API
+* Enable align entity orientation to lane
+* Rename API::defineTrafficSource function
+* Make more readable
+* Enable TrafficSource spawn rate higher than execute() rate
+* Refactor TrafficSource
+* Change bounding box inside circle check to 2D
+* Add bounding box inside circle check
+* Fix timing issues
+* Fix compile error
+* Rename function
+* Forward arguments from API
+* Fix minor helper mistake
+* Add orientation and improve
+* Fix function types
+* Initial TrafficSource changes to randomize poses in cartesian coordinates
+* Minor refactor
+* Add API comment
+* Fix copyright
+* Rename TrafficSource member variables
+* Precalculate valid S value ranges for performance improvement
+* Fix HdMapUtils::getNearbyLaneletIds
+  After the fix only lanelets in the specified distance are returned
+* Improve TrafficSource
+* Add random valid pose generation
+* Refactor TrafficSource
+* Add TrafficSource class
+* Contributors: Masaya Kataoka, Mateusz Palczuk, Tatsuya Yamasaki
+
+1.17.2 (2024-05-22)
+-------------------
+
+1.17.1 (2024-05-21)
+-------------------
+* Merge pull request `#1255 <https://github.com/tier4/scenario_simulator_v2/issues/1255>`_ from tier4/fix/visualization
+  Fix/visualization
+* fix orientation
+* fix frame_id
+* Contributors: Kotaro Yoshimoto, hakuturu583
+
+1.17.0 (2024-05-16)
+-------------------
+* Merge remote-tracking branch 'origin/master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge remote-tracking branch 'origin/master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge remote-tracking branch 'origin/master' into feature/openscenario_validator
+* Merge remote-tracking branch 'origin/feature/openscenario_validator' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Contributors: Kotaro Yoshimoto, Tatsuya Yamasaki
+
+1.16.4 (2024-05-15)
+-------------------
+* Merge pull request `#1245 <https://github.com/tier4/scenario_simulator_v2/issues/1245>`_ from tier4/feature/remove_entity_type_list
+  remove unused member values in behavior plugin
+* Merge branch 'master' into feature/remove_entity_type_list
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into feature/remove_entity_type_list
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into feature/remove_entity_type_list
+* Merge remote-tracking branch 'origin/feature/remove_entity_type_list' into feature/remove_entity_type_list
+* Merge branch 'master' into feature/remove_entity_type_list
+* remove unused member values in behavior plugin
+* Contributors: Kotaro Yoshimoto, Masaya Kataoka, hakuturu583
+
+1.16.3 (2024-05-13)
+-------------------
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into fix/contributing_md
+* Contributors: hakuturu583
+
+1.16.2 (2024-05-10)
+-------------------
+
 1.16.1 (2024-05-10)
 -------------------
 * Merge branch 'master' into doc/support_awesome-pages
