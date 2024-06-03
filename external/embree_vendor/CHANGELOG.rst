@@ -16,6 +16,77 @@ Changelog for package embree_vendor
 * Merge branch 'master' into refactor/drop_workflow
 * Contributors: Kotaro Yoshimoto
 
+2.0.2 (2024-06-03)
+------------------
+
+2.0.1 (2024-05-30)
+------------------
+* Merge branch 'master' into refactor/openscenario_validator
+* Merge branch 'master' into refactor/openscenario_validator
+* Contributors: Kotaro Yoshimoto
+
+2.0.0 (2024-05-27)
+------------------
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge remote-tracking branch 'origin/master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge remote-tracking branch 'origin/master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'ref/RJD-1054-implement-distance-utils' of https://github.com/tier4/scenario_simulator_v2 into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Merge branch 'master' into ref/RJD-1054-implement-distance-utils
+* Contributors: DMoszynski, Dawid Moszynski, Masaya Kataoka, Tatsuya Yamasaki
+
+1.18.0 (2024-05-24)
+-------------------
+* Merge branch 'master' into feature/traffic-source
+* Merge branch 'master' into feature/traffic-source
+* Merge remote-tracking branch 'origin/master' into feature/traffic-source
+* Merge branch 'master' into feature/traffic-source
+* Contributors: Mateusz Palczuk, Tatsuya Yamasaki
+
+1.17.2 (2024-05-22)
+-------------------
+
+1.17.1 (2024-05-21)
+-------------------
+
+1.17.0 (2024-05-16)
+-------------------
+* Merge remote-tracking branch 'origin/master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge remote-tracking branch 'origin/master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge remote-tracking branch 'origin/master' into feature/openscenario_validator
+* Merge remote-tracking branch 'origin/feature/openscenario_validator' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Merge branch 'master' into feature/openscenario_validator
+* Contributors: Kotaro Yoshimoto, Tatsuya Yamasaki
+
+1.16.4 (2024-05-15)
+-------------------
+* Merge branch 'master' into feature/remove_entity_type_list
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into feature/remove_entity_type_list
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into feature/remove_entity_type_list
+* Merge remote-tracking branch 'origin/feature/remove_entity_type_list' into feature/remove_entity_type_list
+* Merge branch 'master' into feature/remove_entity_type_list
+* Contributors: Kotaro Yoshimoto, Masaya Kataoka, hakuturu583
+
+1.16.3 (2024-05-13)
+-------------------
+* Merge branch 'master' of https://github.com/tier4/scenario_simulator_v2 into fix/contributing_md
+* Contributors: hakuturu583
+
 1.16.2 (2024-05-10)
 -------------------
 
