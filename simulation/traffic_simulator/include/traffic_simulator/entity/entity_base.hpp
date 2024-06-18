@@ -214,7 +214,7 @@ public:
 
   /*   */ auto setLinearJerk(const double liner_jerk) -> void;
 
-  virtual void startNpcLogic();
+  virtual void startNpcLogic(const double current_time);
 
   /*   */ void stopAtCurrentPosition();
 
