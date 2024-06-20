@@ -96,7 +96,7 @@ def generate_launch_description():
                 "launch_autoware": True,
                 "vehicle_model": vehicle_model,
                 "sensor_model": sensor_model,
-                "initialize_duration": 900,
+                "initialize_duration": 86400,
                 "consider_pose_by_road_slope": consider_pose_by_road_slope
             }
         ],
