@@ -43,6 +43,8 @@ public:
     param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
     engine_(seed_gen_())
   {
+    spawn_start_lane_id_ = 79;
+    spawn_goal_lane_id_ = 179443;
     start();
   }
 
@@ -55,42 +57,9 @@ private:
   bool lane_change_requested = false;
 
   const size_t MAX_SPAWN_NUMBER = 10;
-  bool has_cleared_npc_ = false;
-  bool has_respawned_ego_ = false;
-
-  lanelet::Id spawn_start_lane_id_{79};
-  lanelet::Id spawn_goal_lane_id_{179443};
-  bool reach_goal_{false};
 
   StateManager<std::string> tl_state_manager_{{"red", "amber", "green"}, {10.0, 3.0, 10.0}};
   StateManager<std::string> crosswalk_pedestrian_state_manager_{{"go", "stop"}, {15.0, 15.0}};
-
-  std::queue<std::pair<std::optional<lanelet::Id>, std::vector<lanelet::Id>>> route_;
-
-  auto getNewRoute() -> std::pair<std::optional<lanelet::Id>, std::vector<lanelet::Id>>
-  {
-    const auto [opt_start_lane_id, route_lane_ids] = route_.front();
-    route_.pop();
-    route_.emplace(opt_start_lane_id, route_lane_ids);
-
-    return {opt_start_lane_id, route_lane_ids};
-  }
-
-  void updateRoute()
-  {
-    const auto [opt_start_lane_id, route_lane_ids] = getNewRoute();
-    if (opt_start_lane_id.has_value() && !route_lane_ids.empty()) {
-      respawn(opt_start_lane_id.value(), route_lane_ids.back());
-      return;
-    }
-
-    std::vector<traffic_simulator::CanonicalizedLaneletPose> new_lane_poses;
-    for (const auto & id : route_lane_ids) {
-      new_lane_poses.push_back(api_.canonicalize(constructLaneletPose(id, 5.0)));
-    }
-    api_.requestClearRoute("ego");
-    api_.requestAssignRoute("ego", new_lane_poses);
-  }
 
   // If ego is far from lane_id, remove all entities.
   // Return if the ego is close to the lane_id.
@@ -353,53 +322,6 @@ private:
 
     setTlColor(traffic_right_ids, tl_color);
     setTlColor(opposite_traffic_right_ids, getOppositeTlColor(tl_color));
-  }
-
-  bool processForEgoStuck()
-  {
-    const auto stuck_time = api_.getStandStillDuration("ego");
-
-    RCLCPP_DEBUG(get_logger(), "stuck time: %f[s]", stuck_time);
-
-    constexpr auto STUCK_TIME_THRESHOLD = 5.0;
-    if (stuck_time > STUCK_TIME_THRESHOLD && !has_cleared_npc_) {
-      RCLCPP_ERROR(get_logger(), "\n\nEgo is in stuck. Remove all NPC.\n\n");
-      auto entities = api_.getEntityNames();
-      for (const auto & e : entities) {
-        if (e != api_.getEgoName()) {
-          api_.despawn(e);
-        }
-      }
-      has_cleared_npc_ = true;
-    }
-
-    constexpr auto RESPAWN_TIME_THRESHOLD = 10.0;
-    if (stuck_time > RESPAWN_TIME_THRESHOLD && !has_respawned_ego_) {
-      RCLCPP_ERROR(get_logger(), "\n\nEgo is in stuck. Respawn ego vehicle.\n\n");
-      respawn(spawn_start_lane_id_, spawn_goal_lane_id_);
-      has_respawned_ego_ = true;
-    }
-
-    if (std::abs(api_.getCurrentTwist("ego").linear.x) > 0.1) {
-      has_cleared_npc_ = false;
-      has_respawned_ego_ = false;
-    }
-
-    return has_cleared_npc_ || has_respawned_ego_;
-  }
-
-  void respawn(const lanelet::Id & start_lane_id, const lanelet::Id & goal_lane_id)
-  {
-    geometry_msgs::msg::PoseWithCovarianceStamped ego_pose;
-    ego_pose.header.frame_id = "map";
-    ego_pose.pose.pose =
-      api_.toMapPose(api_.canonicalize(constructLaneletPose(start_lane_id, 5.0)));
-
-    geometry_msgs::msg::PoseStamped goal_pose;
-    goal_pose.header.frame_id = "map";
-    goal_pose.pose = api_.toMapPose(api_.canonicalize(constructLaneletPose(goal_lane_id, 5.0)));
-
-    api_.respawn("ego", ego_pose, goal_pose);
   }
 
   void onUpdate() override

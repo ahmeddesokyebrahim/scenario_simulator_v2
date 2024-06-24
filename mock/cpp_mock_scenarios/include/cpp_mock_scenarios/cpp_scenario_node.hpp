@@ -19,12 +19,15 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <simple_junit/junit5.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <string>
 #include <traffic_simulator/api/api.hpp>
 #include <vector>
 
 namespace cpp_mock_scenarios
 {
+using traffic_simulator::helper::constructLaneletPose;
+
 enum class Result { SUCCESS = 0, FAILURE = 1 };
 
 class CppScenarioNode : public rclcpp::Node
@@ -52,9 +55,25 @@ public:
     const std::vector<traffic_simulator::CanonicalizedLaneletPose> & goal_lanelet_pose,
     const traffic_simulator_msgs::msg::VehicleParameters & parameters);
 
+  auto getNewRoute() -> std::pair<std::optional<lanelet::Id>, std::vector<lanelet::Id>>;
+  void updateRoute();
+  void respawn(const lanelet::Id & start_lane_id, const lanelet::Id & goal_lane_id);
+  bool processForEgoStuck();
+  template <typename T>
+  void callServiceWithoutResponse(const typename rclcpp::Client<T>::SharedPtr client);
+
 protected:
   traffic_simulator::API api_;
   common::junit::JUnit5 junit_;
+  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr capture_cli_;
+
+  std::queue<std::pair<std::optional<lanelet::Id>, std::vector<lanelet::Id>>> route_;
+  lanelet::Id spawn_start_lane_id_;
+  lanelet::Id spawn_goal_lane_id_;
+
+  bool has_cleared_npc_{false};
+  bool has_respawned_ego_{false};
+  bool reach_goal_{false};
 
 private:
   std::string scenario_filename_;

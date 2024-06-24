@@ -23,6 +23,8 @@ CppScenarioNode::CppScenarioNode(
   const rclcpp::NodeOptions & option)
 : Node(node_name, option),
   api_(this, configure(map_path, lanelet2_map_file, scenario_filename, verbose), 1.0, 20),
+  capture_cli_(this->create_client<std_srvs::srv::Trigger>(
+    "/debug/capture/screen_shot", rmw_qos_profile_default)),
   scenario_filename_(scenario_filename),
   exception_expect_(false)
 {
@@ -139,5 +141,93 @@ void CppScenarioNode::checkConfiguration(const traffic_simulator::Configuration 
   } catch (const common::SimulationError &) {
     stop(Result::FAILURE);
   }
+}
+
+auto CppScenarioNode::getNewRoute()
+  -> std::pair<std::optional<lanelet::Id>, std::vector<lanelet::Id>>
+{
+  const auto [opt_start_lane_id, route_lane_ids] = route_.front();
+  route_.pop();
+  route_.emplace(opt_start_lane_id, route_lane_ids);
+
+  return {opt_start_lane_id, route_lane_ids};
+}
+
+void CppScenarioNode::updateRoute()
+{
+  const auto [opt_start_lane_id, route_lane_ids] = getNewRoute();
+  if (opt_start_lane_id.has_value() && !route_lane_ids.empty()) {
+    respawn(opt_start_lane_id.value(), route_lane_ids.back());
+    return;
+  }
+
+  std::vector<traffic_simulator::CanonicalizedLaneletPose> new_lane_poses;
+  for (const auto & id : route_lane_ids) {
+    new_lane_poses.push_back(api_.canonicalize(constructLaneletPose(id, 5.0)));
+  }
+  api_.requestClearRoute("ego");
+  api_.requestAssignRoute("ego", new_lane_poses);
+}
+
+void CppScenarioNode::respawn(const lanelet::Id & start_lane_id, const lanelet::Id & goal_lane_id)
+{
+  geometry_msgs::msg::PoseWithCovarianceStamped ego_pose;
+  ego_pose.header.frame_id = "map";
+  ego_pose.pose.pose = api_.toMapPose(api_.canonicalize(constructLaneletPose(start_lane_id, 5.0)));
+
+  geometry_msgs::msg::PoseStamped goal_pose;
+  goal_pose.header.frame_id = "map";
+  goal_pose.pose = api_.toMapPose(api_.canonicalize(constructLaneletPose(goal_lane_id, 5.0)));
+
+  api_.respawn("ego", ego_pose, goal_pose);
+}
+
+bool CppScenarioNode::processForEgoStuck()
+{
+  const auto stuck_time = api_.getStandStillDuration("ego");
+
+  RCLCPP_DEBUG(get_logger(), "stuck time: %f[s]", stuck_time);
+
+  constexpr auto STUCK_TIME_THRESHOLD = 5.0;
+  if (stuck_time > STUCK_TIME_THRESHOLD && !has_cleared_npc_) {
+    RCLCPP_ERROR(get_logger(), "\n\nEgo is in stuck. Remove all NPC.\n\n");
+    auto entities = api_.getEntityNames();
+    for (const auto & e : entities) {
+      if (e != api_.getEgoName()) {
+        api_.despawn(e);
+      }
+    }
+    callServiceWithoutResponse<std_srvs::srv::Trigger>(capture_cli_);
+    has_cleared_npc_ = true;
+  }
+
+  constexpr auto RESPAWN_TIME_THRESHOLD = 10.0;
+  if (stuck_time > RESPAWN_TIME_THRESHOLD && !has_respawned_ego_) {
+    RCLCPP_ERROR(get_logger(), "\n\nEgo is in stuck. Respawn ego vehicle.\n\n");
+    respawn(spawn_start_lane_id_, spawn_goal_lane_id_);
+    has_respawned_ego_ = true;
+    callServiceWithoutResponse<std_srvs::srv::Trigger>(capture_cli_);
+  }
+
+  if (std::abs(api_.getCurrentTwist("ego").linear.x) > 0.1) {
+    has_cleared_npc_ = false;
+    has_respawned_ego_ = false;
+  }
+
+  return has_cleared_npc_ || has_respawned_ego_;
+}
+
+template <typename T>
+void CppScenarioNode::callServiceWithoutResponse(const typename rclcpp::Client<T>::SharedPtr client)
+{
+  auto req = std::make_shared<typename T::Request>();
+
+  if (!client->service_is_ready()) {
+    return;
+  }
+
+  client->async_send_request(req, [this](typename rclcpp::Client<T>::SharedFuture result) {
+    RCLCPP_DEBUG(rclcpp::get_logger(__func__), "Status: %s", result.get()->message.c_str());
+  });
 }
 }  // namespace cpp_mock_scenarios
