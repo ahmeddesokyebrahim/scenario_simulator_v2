@@ -40,8 +40,7 @@ public:
   : cpp_mock_scenarios::CppScenarioNode(
       "random_bs", std::string(getenv("HOME")) + "/workspace/bs_stable", "lanelet2_map.osm",
       __FILE__, false, option),
-    param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
-    engine_(seed_gen_())
+    param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface()))
   {
     spawn_start_lane_id_ = 95;
     spawn_goal_lane_id_ = 45;
@@ -51,8 +50,6 @@ public:
 private:
   std::shared_ptr<random001::ParamListener> param_listener_;
   random001::Params params_;
-  std::random_device seed_gen_;
-  std::mt19937 engine_;
   double lane_change_position = 0.0;
   bool lane_change_requested = false;
 
@@ -430,12 +427,13 @@ private:
     params_ = param_listener_->get_params();
 
     std::vector<lanelet::Id> route1 = {30, 37, 45};
-    route_.emplace(spawn_start_lane_id_, route1);
+    route_.emplace(spawn_start_lane_id_, true, route1, true);
 
     std::vector<lanelet::Id> route2 = {7, 95};
-    route_.emplace(std::nullopt, route2);
+    route_.emplace(std::nullopt, true, route2, true);
 
-    const auto [opt_start_lane_id, route_lane_ids] = getNewRoute();
+    const auto [opt_start_lane_id, is_random_start_pose, route_lane_ids, is_random_goal_pose] =
+      getNewRoute();
     const auto spawn_pose = api_.canonicalize(constructLaneletPose(opt_start_lane_id.value(), 5.0));
     const auto goal_poses = [&](const std::vector<lanelet::Id> lane_ids) {
       std::vector<traffic_simulator::CanonicalizedLaneletPose> poses;

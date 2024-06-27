@@ -17,6 +17,7 @@
 
 #include <limits>
 #include <memory>
+#include <random>
 #include <rclcpp/rclcpp.hpp>
 #include <simple_junit/junit5.hpp>
 #include <std_srvs/srv/trigger.hpp>
@@ -55,9 +56,12 @@ public:
     const std::vector<traffic_simulator::CanonicalizedLaneletPose> & goal_lanelet_pose,
     const traffic_simulator_msgs::msg::VehicleParameters & parameters);
 
-  auto getNewRoute() -> std::pair<std::optional<lanelet::Id>, std::vector<lanelet::Id>>;
+  auto getNewRoute()
+    -> std::tuple<std::optional<lanelet::Id>, bool, std::vector<lanelet::Id>, bool>;
   void updateRoute();
-  void respawn(const lanelet::Id & start_lane_id, const lanelet::Id & goal_lane_id);
+  void respawn(
+    const lanelet::Id & start_lane_id, const bool is_random_start_pose,
+    const lanelet::Id & goal_lane_id, const bool is_random_goal_pose);
   bool processForEgoStuck();
   template <typename T>
   void callServiceWithoutResponse(const typename rclcpp::Client<T>::SharedPtr client);
@@ -67,13 +71,16 @@ protected:
   common::junit::JUnit5 junit_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr capture_cli_;
 
-  std::queue<std::pair<std::optional<lanelet::Id>, std::vector<lanelet::Id>>> route_;
+  std::queue<std::tuple<std::optional<lanelet::Id>, bool, std::vector<lanelet::Id>, bool>> route_;
   lanelet::Id spawn_start_lane_id_;
   lanelet::Id spawn_goal_lane_id_;
 
   bool has_cleared_npc_{false};
   bool has_respawned_ego_{false};
   bool reach_goal_{false};
+
+  std::random_device seed_gen_;
+  std::mt19937 engine_;
 
 private:
   std::string scenario_filename_;
