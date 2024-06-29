@@ -103,6 +103,50 @@ double randomDouble(double min, double max)
   return min + (rand() / div);
 }
 
+uint8_t get_random_entity_subtype()
+{
+  using traffic_simulator_msgs::msg::EntitySubtype;
+  constexpr double PROB_CAR = 0.5;
+  constexpr double PROB_TRUCK = 0.2;
+  constexpr double PROB_BUS = 0.2;
+
+  const auto probability = randomDouble(0.0, 1.0);
+
+  if (probability < PROB_CAR) {
+    return EntitySubtype::CAR;
+  } else if (probability < PROB_CAR + PROB_TRUCK) {
+    return EntitySubtype::TRUCK;
+  } else if (probability < PROB_CAR + PROB_TRUCK + PROB_BUS) {
+    return EntitySubtype::BUS;
+  }
+
+  // CAR: 50%
+  // TRUCK: 20%
+  // BUS: 20%
+  // TRAILER: 10%
+  return EntitySubtype::TRAILER;
+}
+
+double get_random_lateral_offset(const DIRECTION direction)
+{
+  const auto [min_offset, max_offset] = [&direction]() -> std::pair<double, double> {
+    if (direction == DIRECTION::CENTER) {
+      return {-0.5, 0.5};
+    } else if (direction == DIRECTION::LEFT) {
+      return {3.0, 1.5};
+    } else if (direction == DIRECTION::RIGHT) {
+      return {-1.5, -3.0};
+    } else if (direction == DIRECTION::VERY_LEFT) {
+      return {3.0, 1.5};
+    } else if (direction == DIRECTION::VERY_RIGHT) {
+      return {-1.5, -3.0};
+    }
+    return {-0.1, 0.1};
+  }();
+
+  return randomDouble(min_offset, max_offset);
+}
+
 std::string getOppositeTlColor(const std::string & color)
 {
   if (color == "red") return "green";

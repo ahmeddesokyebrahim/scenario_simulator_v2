@@ -44,6 +44,12 @@ random001:
         read_only: false
         validation:
           bounds<>: [0, 1.2]
+      s_variance:
+        type: double
+        default_value: 1.0
+        description: "Variance of the normal distribution of the s value in the pedestrian. Distribution type is normal distribution."
+        validation:
+          bounds<>: [0.0, 2.5]
     road_parking_vehicle:
       number_of_vehicle:
         type: int
