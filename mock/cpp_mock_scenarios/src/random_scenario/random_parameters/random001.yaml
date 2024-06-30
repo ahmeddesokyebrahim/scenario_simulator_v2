@@ -1,4 +1,64 @@
 random001:
+  npc_names:
+    type: string_array
+    default_value: []
+    description: "specifies which joints will be used by the controller"
+
+  npc:
+    __map_npc_names:
+      npc_type:
+        type: string
+        default_value: "moving_vehicle"
+        description: "Npc type."
+        read_only: false
+        validation:
+          one_of<>: [ [ "parked_vehicle", "moving_vehicle", "pedestrian" ] ]
+      spawn_lane_id:
+        type: int
+        default_value: 1
+        description: "Spawn lanelet id."
+        read_only: false
+      goal_lane_id:
+        type: int
+        default_value: 1
+        description: "Goal lanelet id."
+        read_only: false
+      min_num:
+        type: int
+        default_value: 1
+        description: "Object minimum number."
+        read_only: false
+        validation:
+          bounds<>: [0, 5]
+      max_num:
+        type: int
+        default_value: 1
+        description: "Object maxmum number."
+        read_only: false
+        validation:
+          bounds<>: [0, 5]
+      direction:
+        type: string
+        default_value: "center"
+        description: "Npc lateral position."
+        read_only: false
+        validation:
+          one_of<>: [ [ "center", "right", "left", "very_right", "very_left" ] ]
+      min_speed:
+        type: double
+        default_value: 3.0
+        description: "Object minimum number."
+        read_only: false
+        validation:
+          bounds<>: [0.0, 20.0]
+      max_speed:
+        type: double
+        default_value: 11.1
+        description: "Object maxmum number."
+        read_only: false
+        validation:
+          bounds<>: [0.0, 20.0]
+
   random_parameters:
     lane_following_vehicle:
       min_speed:

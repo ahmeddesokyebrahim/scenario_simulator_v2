@@ -310,35 +310,43 @@ private:
       return;
     }
 
-    constexpr double MIN_VEL = 5.0;
-    constexpr double MAX_VEL = 20.0;
+    const auto convert = [](const std::string & direction) {
+      if (direction == "right") {
+        return DIRECTION::RIGHT;
+      }
+      if (direction == "right") {
+        return DIRECTION::LEFT;
+      }
+      if (direction == "right") {
+        return DIRECTION::VERY_RIGHT;
+      }
+      if (direction == "right") {
+        return DIRECTION::VERY_LEFT;
+      }
+      return DIRECTION::CENTER;
+    };
 
-    // parked vehicle
-    updateParkedVehicle(57, randomInt(1, 1), DIRECTION::LEFT);  // unstable
-    updateParkedVehicle(37, randomInt(0, 2), DIRECTION::LEFT);  // unstable
-    updateParkedVehicle(8022, randomInt(0, 2), DIRECTION::VERY_RIGHT);
-    updateParkedVehicle(39, randomInt(0, 2), DIRECTION::VERY_LEFT);  // stuck多し
+    for (const auto & [name, data] : params_.npc.npc_names_map) {
+      if (data.npc_type == "parked_vehicle") {
+        updateParkedVehicle(
+          data.spawn_lane_id, randomInt(data.min_num, data.max_num), convert(data.direction));
+      }
 
-    // moving vehicle
-    updateMovingVehicle(97, 62, randomInt(1, 2), MIN_VEL, MAX_VEL);
-    updateMovingVehicle(8017, 57, randomInt(2, 4), MIN_VEL, MAX_VEL);
+      if (data.npc_type == "moving_vehicle") {
+        updateMovingVehicle(
+          data.spawn_lane_id, data.goal_lane_id, randomInt(data.min_num, data.max_num),
+          data.min_speed, data.max_speed);
+      }
 
-    // pedestrian
-    updatePedestrian(37, 37, randomInt(1, 3), DIRECTION::LEFT);
-    updatePedestrian(57, 57, randomInt(1, 3), DIRECTION::RIGHT);
-    updatePedestrian(8017, 8, randomInt(1, 3), DIRECTION::VERY_LEFT);
+      if (data.npc_type == "parked_vehicle") {
+        updatePedestrian(
+          data.spawn_lane_id, data.goal_lane_id, randomInt(data.min_num, data.max_num),
+          convert(data.direction));
+      }
+    }
 
     // traffic light
     updateRandomTrafficLightColor({8335, 8324}, {8313, 8302}, tl_state_manager_.getCurrentState());
-
-    // NPCを出力させてLCする
-    // if (api_.isInLanelet("ego", 34684, 0.1)) {
-    //   spawnAndChangeLane(
-    //     "lane_following_0", constructLaneletPose(34513, 0.0), 34684, Direction::RIGHT);
-    // }
-
-    // 自己位置の相対位置にnpcを配置
-    // spawnAndDespawnRelativeFromEgoInRange(34621, 10.0, 20.0, 10.0, -5.0);
   }
 
   void onInitialize() override

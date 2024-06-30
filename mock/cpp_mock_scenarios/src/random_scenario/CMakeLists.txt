@@ -35,6 +35,10 @@ install(TARGETS
   DESTINATION lib/cpp_mock_scenarios
 )
 
+install(
+  DIRECTORY random_parameters
+  DESTINATION share/${PROJECT_NAME})
+
 if(BUILD_TESTING)
   include(../../cmake/add_cpp_mock_scenario_test.cmake)
   # add_cpp_mock_scenario_test(${PROJECT_NAME} "random001" "10.0")
