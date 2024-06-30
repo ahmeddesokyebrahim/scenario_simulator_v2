@@ -20,6 +20,7 @@
 from logging import shutdown
 import os
 import sys
+import yaml
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -72,6 +73,9 @@ def on_stdout_output(event: launch.Event) -> None:
 
 
 def generate_launch_description():
+    with open(os.path.join(get_package_share_directory("cpp_mock_scenarios") + "/random_parameters/scenario003.yaml"), "r") as f:
+        scenario_param = yaml.safe_load(f)["/**"]["ros__parameters"]
+
     timeout = LaunchConfiguration("timeout", default=10.0)
     scenario = LaunchConfiguration("scenario", default="")
     scenario_package = LaunchConfiguration("package", default="cpp_mock_scenarios")
@@ -98,7 +102,8 @@ def generate_launch_description():
                 "sensor_model": sensor_model,
                 "initialize_duration": 86400,
                 "consider_pose_by_road_slope": consider_pose_by_road_slope
-            }
+            },
+            scenario_param
         ],
     )
     io_handler = OnProcessIO(
