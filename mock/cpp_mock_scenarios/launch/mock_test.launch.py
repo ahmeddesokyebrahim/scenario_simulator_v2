@@ -31,7 +31,7 @@ from launch.conditions import IfCondition
 from launch.events import Shutdown
 from launch.event_handlers import OnProcessExit, OnProcessIO
 
-from launch.actions import EmitEvent, RegisterEventHandler, LogInfo, TimerAction
+from launch.actions import EmitEvent, RegisterEventHandler, LogInfo, TimerAction, OpaqueFunction, GroupAction
 from launch.actions.declare_launch_argument import DeclareLaunchArgument
 from launch.substitutions.launch_configuration import LaunchConfiguration
 
@@ -71,11 +71,7 @@ def on_stdout_output(event: launch.Event) -> None:
         if lines[0] == "cpp_scenario:success":
             print(Color.GREEN + "Scenario Succeed" + Color.END)
 
-
-def generate_launch_description():
-    with open(os.path.join(get_package_share_directory("cpp_mock_scenarios") + "/random_parameters/scenario003.yaml"), "r") as f:
-        scenario_param = yaml.safe_load(f)["/**"]["ros__parameters"]
-
+def launch_setup(context, *args, **kwargs):
     timeout = LaunchConfiguration("timeout", default=10.0)
     scenario = LaunchConfiguration("scenario", default="")
     scenario_package = LaunchConfiguration("package", default="cpp_mock_scenarios")
@@ -84,6 +80,11 @@ def generate_launch_description():
     vehicle_model = LaunchConfiguration("vehicle_model", default="sample_vehicle")
     sensor_model = LaunchConfiguration("sensor_model", default="sample_sensor_kit")
     consider_pose_by_road_slope = LaunchConfiguration("consider_pose_by_road_slope", default=True)
+
+    with open(os.path.join(get_package_share_directory("cpp_mock_scenarios"),
+        "random_parameters", scenario.perform(context)) + ".yaml", "r") as f:
+            scenario_param = yaml.safe_load(f)["/**"]["ros__parameters"]
+
     scenario_node = Node(
         package=scenario_package,
         executable=scenario,
@@ -114,7 +115,8 @@ def generate_launch_description():
     shutdown_handler = OnProcessExit(
         target_action=scenario_node, on_exit=[EmitEvent(event=Shutdown())]
     )
-    description = LaunchDescription(
+
+    group = GroupAction(
         [
             DeclareLaunchArgument(
                 "scenario", default_value=scenario, description="Name of the scenario."
@@ -184,4 +186,10 @@ def generate_launch_description():
             ),
         ]
     )
-    return description
+
+    return [group]
+
+def generate_launch_description():
+    return launch.LaunchDescription(
+        [OpaqueFunction(function=launch_setup)]
+   )
