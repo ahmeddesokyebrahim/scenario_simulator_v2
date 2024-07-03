@@ -13,10 +13,10 @@
 // limitations under the License.
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <common_parameters.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
 #include <memory>
-#include <random001_parameters.hpp>
 #include <random>
 #include <rclcpp/rclcpp.hpp>
 #include <string>
@@ -31,15 +31,15 @@ public:
   : cpp_mock_scenarios::CppScenarioNode(
       "lanechange_left", ament_index_cpp::get_package_share_directory("kashiwanoha_map") + "/map",
       "lanelet2_map.osm", __FILE__, false, option),
-    param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface())),
+    param_listener_(std::make_shared<common::ParamListener>(get_node_parameters_interface())),
     engine_(seed_gen_())
   {
     start();
   }
 
 private:
-  std::shared_ptr<random001::ParamListener> param_listener_;
-  random001::Params params_;
+  std::shared_ptr<common::ParamListener> param_listener_;
+  common::Params params_;
   std::random_device seed_gen_;
   std::mt19937 engine_;
   double lane_change_position = 0.0;

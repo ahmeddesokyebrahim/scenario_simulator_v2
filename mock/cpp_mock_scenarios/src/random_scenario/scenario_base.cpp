@@ -15,10 +15,10 @@
 #include <quaternion_operation/quaternion_operation.h>
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <common_parameters.hpp>
 #include <cpp_mock_scenarios/catalogs.hpp>
 #include <cpp_mock_scenarios/cpp_scenario_node.hpp>
 #include <geometry/distance.hpp>
-#include <random001_parameters.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <traffic_simulator/api/api.hpp>
 #include <traffic_simulator/helper/stop_watch.hpp>
@@ -39,18 +39,15 @@ class RandomScenario : public cpp_mock_scenarios::CppScenarioNode
 public:
   explicit RandomScenario(const rclcpp::NodeOptions & option)
   : cpp_mock_scenarios::CppScenarioNode(
-      "random_bs", std::string(getenv("HOME")) + "/workspace/bs_stable", "lanelet2_map.osm",
-      __FILE__, false, option),
-    param_listener_(std::make_shared<random001::ParamListener>(get_node_parameters_interface()))
+      "random_scenario", "/dir", "lanelet2_map.osm", __FILE__, false, option),
+    param_listener_(std::make_shared<common::ParamListener>(get_node_parameters_interface()))
   {
-    spawn_start_lane_id_ = 95;
-    spawn_goal_lane_id_ = 45;
     start();
   }
 
 private:
-  std::shared_ptr<random001::ParamListener> param_listener_;
-  random001::Params params_;
+  std::shared_ptr<common::ParamListener> param_listener_;
+  common::Params params_;
   double lane_change_position = 0.0;
   bool lane_change_requested = false;
 
@@ -58,11 +55,12 @@ private:
 
   const double TH_DESPAWN_DISTANCE = 220.0;
   const double TH_SPAWN_DISTANCE = 200.0;
+  const double TH_CREAR_DISTANCE = 30.0;
   const std::string PEDESTRIAN_PREFIX = "pedestrian_";
   const std::string PARKED_VEHICLE_PREFIX = "parked_vehicle_";
   const std::string MOVING_VEHICLE_PREFIX = "moving_vehicle_";
 
-  StateManager<std::string> tl_state_manager_{{"red", "amber", "green"}, {10.0, 3.0, 10.0}};
+  StateManager<std::string> traffic_light_{{"red", "amber", "green"}, {10.0, 3.0, 10.0}};
   StateManager<std::string> pedestrian_{{"go", "stop"}, {15.0, 15.0}};
 
   void removeFarEntity(const lanelet::Id & id, const std::string & prefix)
@@ -81,6 +79,12 @@ private:
     }
   }
 
+  bool isTooClose(const lanelet::Id & id)
+  {
+    return api_.reachPosition(
+      "ego", api_.canonicalize(constructLaneletPose(id, 0.0)), TH_CREAR_DISTANCE);
+  }
+
   bool isInSpawnRange(const lanelet::Id & id)
   {
     return api_.reachPosition(
@@ -97,6 +101,10 @@ private:
       return;
     }
 
+    if (isTooClose(spawn_lane_id)) {
+      return;
+    }
+
     const auto & p = params_.random_parameters.road_parking_vehicle;
     std::normal_distribution<> normal_dist(0.0, p.s_variance);
     for (size_t npc_id = 0; npc_id < entity_max_num; npc_id++) {
@@ -104,7 +112,8 @@ private:
         static_cast<double>(npc_id) / entity_max_num * api_.getLaneletLength(spawn_lane_id) +
         normal_dist(engine_);
       spawnNPCVehicle(
-        spawn_lane_id, spawn_lane_id, MOVING_VEHICLE_PREFIX, npc_id, lon_offset, DIRECTION::CENTER,
+        spawn_lane_id, spawn_lane_id, MOVING_VEHICLE_PREFIX, npc_id,
+        std::clamp(lon_offset, 0.0, api_.getLaneletLength(spawn_lane_id)), DIRECTION::CENTER,
         randomDouble(min_v, max_v));
     }
   }
@@ -118,6 +127,10 @@ private:
       return;
     }
 
+    if (isTooClose(spawn_lane_id)) {
+      return;
+    }
+
     const auto & p = params_.random_parameters.road_parking_vehicle;
     std::normal_distribution<> normal_dist(0.0, p.s_variance);
     for (size_t npc_id = 0; npc_id < entity_max_num; npc_id++) {
@@ -125,7 +138,8 @@ private:
         static_cast<double>(npc_id) / entity_max_num * api_.getLaneletLength(spawn_lane_id) +
         normal_dist(engine_);
       spawnNPCVehicle(
-        spawn_lane_id, spawn_lane_id, PARKED_VEHICLE_PREFIX, npc_id, lon_offset, direction, 0.0);
+        spawn_lane_id, spawn_lane_id, PARKED_VEHICLE_PREFIX, npc_id,
+        std::clamp(lon_offset, 0.0, api_.getLaneletLength(spawn_lane_id)), direction, 0.0);
     }
   }
 
@@ -140,6 +154,10 @@ private:
       return;
     }
 
+    if (isTooClose(spawn_lane_id)) {
+      return;
+    }
+
     const auto & p = params_.random_parameters.crossing_pedestrian;
     std::normal_distribution<> normal_dist(0.0, p.s_variance);
     for (size_t npc_id = 0; npc_id < entity_max_num; ++npc_id) {
@@ -147,7 +165,9 @@ private:
         static_cast<double>(npc_id) / entity_max_num * api_.getLaneletLength(spawn_lane_id) +
         normal_dist(engine_);
       spawnNPCPedestrian(
-        spawn_lane_id, goal_lane_id, npc_id, lon_offset, direction, randomDouble(min_v, max_v));
+        spawn_lane_id, goal_lane_id, npc_id,
+        std::clamp(lon_offset, 0.0, api_.getLaneletLength(spawn_lane_id)), direction,
+        randomDouble(min_v, max_v));
     }
   }
 
@@ -177,7 +197,9 @@ private:
 
     constexpr double reach_tolerance = 2.0;
     if (api_.reachPosition(
-          entity_name, api_.canonicalize(constructLaneletPose(goal_lane_id, 0.0)),
+          entity_name,
+          api_.canonicalize(
+            constructLaneletPose(goal_lane_id, api_.getLaneletLength(goal_lane_id))),
           reach_tolerance)) {
       api_.despawn(entity_name);
     }
@@ -271,8 +293,8 @@ private:
 
   // Set color for the traffic_right_id. Set opposite color (green <-> red) to the opposite_traffic_right_id
   void updateRandomTrafficLightColor(
-    const std::vector<int> & traffic_right_ids, const std::vector<int> & opposite_traffic_right_ids,
-    const std::string & tl_color)
+    const std::vector<lanelet::Id> & traffic_light_ids,
+    const std::vector<lanelet::Id> & opposite_phase_ids, const std::string & tl_color)
   {
     const auto setTlColor = [&](const auto & ids, const std::string & color) {
       for (const auto id : ids) {
@@ -284,8 +306,8 @@ private:
       }
     };
 
-    setTlColor(traffic_right_ids, tl_color);
-    setTlColor(opposite_traffic_right_ids, getOppositeTlColor(tl_color));
+    setTlColor(traffic_light_ids, tl_color);
+    setTlColor(opposite_phase_ids, getOppositeTlColor(tl_color));
   }
 
   void onUpdate() override
@@ -314,13 +336,13 @@ private:
       if (direction == "right") {
         return DIRECTION::RIGHT;
       }
-      if (direction == "right") {
+      if (direction == "left") {
         return DIRECTION::LEFT;
       }
-      if (direction == "right") {
+      if (direction == "very_right") {
         return DIRECTION::VERY_RIGHT;
       }
-      if (direction == "right") {
+      if (direction == "very_left") {
         return DIRECTION::VERY_LEFT;
       }
       return DIRECTION::CENTER;
@@ -338,7 +360,7 @@ private:
           data.min_speed, data.max_speed);
       }
 
-      if (data.npc_type == "parked_vehicle") {
+      if (data.npc_type == "pedestrian") {
         updatePedestrian(
           data.spawn_lane_id, data.goal_lane_id, randomInt(data.min_num, data.max_num),
           convert(data.direction));
@@ -346,22 +368,26 @@ private:
     }
 
     // traffic light
-    updateRandomTrafficLightColor({8335, 8324}, {8313, 8302}, tl_state_manager_.getCurrentState());
+    for (const auto & [name, data] : params_.traffic_light.traffic_light_names_map) {
+      const auto state = traffic_light_.getCurrentState();
+      updateRandomTrafficLightColor(data.traffic_light_ids, data.opposite_phase_ids, state);
+    }
   }
 
   void onInitialize() override
   {
-    // api_.setVerbose(true);
-
     srand(time(0));  // Initialize random seed
 
     params_ = param_listener_->get_params();
 
-    std::vector<lanelet::Id> route1 = {30, 37, 45};
-    route_.emplace(spawn_start_lane_id_, true, route1, true);
-
-    std::vector<lanelet::Id> route2 = {7, 95};
-    route_.emplace(std::nullopt, true, route2, true);
+    for (const auto & [name, route] : params_.route.route_names_map) {
+      if (route.init_start_lane) {
+        route_.emplace(
+          route.start_lane_id, !route.fix_start_pose, route.route_ids, !route.fix_goal_pose);
+      } else {
+        route_.emplace(std::nullopt, !route.fix_start_pose, route.route_ids, !route.fix_goal_pose);
+      }
+    }
 
     const auto [opt_start_lane_id, is_random_start_pose, route_lane_ids, is_random_goal_pose] =
       getNewRoute();

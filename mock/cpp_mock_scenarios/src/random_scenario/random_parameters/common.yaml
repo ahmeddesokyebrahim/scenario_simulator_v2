@@ -1,0 +1,225 @@
+common:
+  map_dir:
+    type: string
+    default_value: "/dir"
+    description: "specifies which joints will be used by the controller"
+
+  respawn:
+    init_lane_id:
+      type: int
+      default_value: 1
+      description: "Spawn lanelet id."
+      read_only: false
+    goal_lane_id:
+      type: int
+      default_value: 1
+      description: "Spawn lanelet id."
+      read_only: false
+
+  route_names:
+    type: string_array
+    default_value: []
+    description: "specifies which joints will be used by the controller"
+
+  route:
+    __map_route_names:
+      start_lane_id:
+        type: int
+        default_value: 1
+        description: "Spawn lanelet id."
+        read_only: false
+      route_ids:
+        type: int_array
+        default_value: [1]
+        description: "Goal lanelet id."
+        read_only: false
+        validation:
+          not_empty<>: []
+      fix_start_pose:
+        type: bool
+        default_value: true
+        description: "Object minimum number."
+        read_only: false
+      fix_goal_pose:
+        type: bool
+        default_value: true
+        description: "Object minimum number."
+        read_only: false
+      init_start_lane:
+        type: bool
+        default_value: false
+        description: "Object minimum number."
+        read_only: false
+
+  traffic_light_names:
+    type: string_array
+    default_value: []
+    description: "specifies which joints will be used by the controller"
+
+  traffic_light:
+    __map_traffic_light_names:
+      traffic_light_ids:
+        type: int_array
+        default_value: [1]
+        description: "Goal lanelet id."
+        read_only: false
+      opposite_phase_ids:
+        type: int_array
+        default_value: []
+        description: "Goal lanelet id."
+        read_only: false
+
+  npc_names:
+    type: string_array
+    default_value: []
+    description: "specifies which joints will be used by the controller"
+
+  npc:
+    __map_npc_names:
+      npc_type:
+        type: string
+        default_value: "moving_vehicle"
+        description: "Npc type."
+        read_only: false
+        validation:
+          one_of<>: [ [ "parked_vehicle", "moving_vehicle", "pedestrian" ] ]
+      spawn_lane_id:
+        type: int
+        default_value: 1
+        description: "Spawn lanelet id."
+        read_only: false
+      goal_lane_id:
+        type: int
+        default_value: 1
+        description: "Goal lanelet id."
+        read_only: false
+      min_num:
+        type: int
+        default_value: 1
+        description: "Object minimum number."
+        read_only: false
+        validation:
+          bounds<>: [0, 5]
+      max_num:
+        type: int
+        default_value: 1
+        description: "Object maxmum number."
+        read_only: false
+        validation:
+          bounds<>: [0, 5]
+      direction:
+        type: string
+        default_value: "center"
+        description: "Npc lateral position."
+        read_only: false
+        validation:
+          one_of<>: [ [ "center", "right", "left", "very_right", "very_left" ] ]
+      min_speed:
+        type: double
+        default_value: 3.0
+        description: "Object minimum number."
+        read_only: false
+        validation:
+          bounds<>: [0.0, 20.0]
+      max_speed:
+        type: double
+        default_value: 11.1
+        description: "Object maxmum number."
+        read_only: false
+        validation:
+          bounds<>: [0.0, 20.0]
+
+  random_parameters:
+    lane_following_vehicle:
+      min_speed:
+        type: double
+        default_value: 2.0
+        description: "Minimum speed of the pedestrian on crosswalk. Distribution type is uniform distribution."
+        read_only: false
+        validation:
+          bounds<>: [0, 10]
+      max_speed:
+        type: double
+        default_value: 5.0
+        description: "Maximum speed of the pedestrian on crosswalk. Distribution type is uniform distribution."
+        read_only: false
+        validation:
+          bounds<>: [0, 5]
+    crossing_pedestrian:
+      number_of_pedestrian:
+        type: int
+        default_value: 2
+        description: "Number of crossing pedestrian on crosswalk."
+        read_only: false
+        validation:
+          bounds<>: [0, 10]
+      min_speed:
+        type: double
+        default_value: 1.0
+        description: "Minimum speed of the pedestrian on crosswalk. Distribution type is uniform distribution."
+        read_only: false
+        validation:
+          bounds<>: [0, 10]
+      max_speed:
+        type: double
+        default_value: 2.0
+        description: "Maximum speed of the pedestrian on crosswalk. Distribution type is uniform distribution."
+        read_only: false
+        validation:
+          bounds<>: [0, 5]
+      offset_variance:
+        type: double
+        default_value: 1.0
+        description: "Variance of the offset of the crossing pedestrian. Distribution type is normal distribution."
+        read_only: false
+        validation:
+          bounds<>: [0, 1.2]
+      s_variance:
+        type: double
+        default_value: 1.0
+        description: "Variance of the normal distribution of the s value in the pedestrian. Distribution type is normal distribution."
+        validation:
+          bounds<>: [0.0, 2.5]
+    road_parking_vehicle:
+      number_of_vehicle:
+        type: int
+        default_value: 2
+        description: "Number of parking vehicle in road side."
+        read_only: false
+        validation: 
+          bounds<>: [0, 10]
+      max_offset:
+        type: double
+        default_value: 2.5
+        description: "Maximum offset of the road parking vehicle. Distribution type is uniform distribution."
+        read_only: false
+        validation:
+          bounds<>: [-2.5, 2.5]
+      min_offset:
+        type: double
+        default_value: 2.0
+        description: "Minimum offset of the road parking vehicle. Distribution type is uniform distribution."
+        read_only: false
+        validation: 
+          bounds<>: [-2.5, 2.5]
+      s_variance:
+        type: double
+        default_value: 1.0
+        description: "Variance of the normal distribution of the s value in the road parking vehicle. Distribution type is normal distribution."
+        validation:
+          bounds<>: [0.0, 2.5]
+      entity_type:
+        type: string
+        default_value: "car"
+        description: "Type of the road parking vehicle entity."
+        read_only: false
+        validation:
+          one_of<>:
+            [
+              [
+                "car",
+                "truck",
+                "bus",
+                "trailer",
+              ],
+            ]

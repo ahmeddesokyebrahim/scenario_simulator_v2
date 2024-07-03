@@ -72,8 +72,8 @@ protected:
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr capture_cli_;
 
   std::queue<std::tuple<std::optional<lanelet::Id>, bool, std::vector<lanelet::Id>, bool>> route_;
-  lanelet::Id spawn_start_lane_id_;
-  lanelet::Id spawn_goal_lane_id_;
+  lanelet::Id init_lane_id_;
+  lanelet::Id goal_lane_id_;
 
   bool has_cleared_npc_{false};
   bool has_respawned_ego_{false};

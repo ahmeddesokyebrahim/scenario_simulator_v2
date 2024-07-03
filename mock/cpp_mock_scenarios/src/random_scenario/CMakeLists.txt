@@ -1,6 +1,6 @@
 generate_parameter_library(
-  random001_parameters
-  random_parameters/random001.yaml
+  common_parameters
+  random_parameters/common.yaml
 )
 
 ament_auto_add_executable(random001
@@ -8,24 +8,24 @@ ament_auto_add_executable(random001
 )
 target_link_libraries(random001
   cpp_scenario_node
-  random001_parameters
+  common_parameters
 )
 ament_auto_add_executable(random002
-  random002-miraikan.cpp
+  scenario_base.cpp
 )
 target_link_libraries(random002
   cpp_scenario_node
-  random001_parameters
+  common_parameters
 )
 ament_auto_add_executable(random003
-  random003-bs.cpp
+  scenario_base.cpp
 )
 target_link_libraries(random003
   cpp_scenario_node
-  random001_parameters
+  common_parameters
 )
 target_include_directories(random001
-  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/random001_parameters/include
+  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/common_parameters/include
 )
 
 install(TARGETS

@@ -22,10 +22,18 @@ CppScenarioNode::CppScenarioNode(
   const std::string & lanelet2_map_file, const std::string & scenario_filename, const bool verbose,
   const rclcpp::NodeOptions & option)
 : Node(node_name, option),
-  api_(this, configure(map_path, lanelet2_map_file, scenario_filename, verbose), 1.0, 20),
+  api_(
+    this,
+    configure(
+      this->declare_parameter<std::string>("home_dir", std::string(getenv("HOME"))) +
+        this->declare_parameter<std::string>("map_dir", map_path),
+      lanelet2_map_file, scenario_filename, verbose),
+    1.0, 20),
   capture_cli_(this->create_client<std_srvs::srv::Trigger>(
     "/debug/capture/screen_shot", rmw_qos_profile_default)),
   scenario_filename_(scenario_filename),
+  init_lane_id_(this->declare_parameter<int>("respawn.init_lane_id")),
+  goal_lane_id_(this->declare_parameter<int>("respawn.goal_lane_id")),
   exception_expect_(false),
   engine_(seed_gen_())
 {
@@ -225,7 +233,7 @@ bool CppScenarioNode::processForEgoStuck()
   constexpr auto RESPAWN_TIME_THRESHOLD = 10.0;
   if (stuck_time > RESPAWN_TIME_THRESHOLD && !has_respawned_ego_) {
     RCLCPP_ERROR(get_logger(), "\n\nEgo is in stuck. Respawn ego vehicle.\n\n");
-    respawn(spawn_start_lane_id_, false, spawn_goal_lane_id_, false);
+    respawn(init_lane_id_, false, goal_lane_id_, false);
     has_respawned_ego_ = true;
     callServiceWithoutResponse<std_srvs::srv::Trigger>(capture_cli_);
   }

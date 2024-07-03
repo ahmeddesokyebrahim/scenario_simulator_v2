@@ -1,0 +1,349 @@
+/**:
+  ros__parameters:
+    map_dir: "/workspace/large_size_odaiba_beta"
+
+    respawn:
+      init_lane_id: 79
+      goal_lane_id: 179443
+
+    route_names:
+      - "route1"
+      - "route2"
+      - "route3"
+      - "route4"
+
+    route:
+      route1:
+        start_lane_id: 79
+        route_ids: [179443]
+        fix_start_pose: false
+        fix_goal_pose: false
+        init_start_lane: true
+      route2:
+        route_ids: [83]
+        fix_start_pose: false
+        fix_goal_pose: false
+        init_start_lane: false
+      route3:
+        start_lane_id: 175965
+        route_ids: [300087]
+        fix_start_pose: false
+        fix_goal_pose: false
+        init_start_lane: true
+      route4:
+        start_lane_id: 1914803
+        route_ids: [2018246]
+        fix_start_pose: false
+        fix_goal_pose: true
+        init_start_lane: true
+
+    traffic_light_names:
+      - "traffic_light0"
+      - "traffic_light1"
+      - "traffic_light2"
+      - "traffic_light3"
+      - "traffic_light4"
+      - "traffic_light5"
+      - "traffic_light6"
+      - "traffic_light7"
+      - "traffic_light8"
+      - "traffic_light9"
+      - "traffic_light10"
+      - "traffic_light11"
+      - "traffic_light12"
+      - "traffic_light13"
+
+    traffic_light:
+      traffic_light0:
+        traffic_light_ids: [10584]
+        opposite_phase_ids: [10589]
+      traffic_light1:
+        traffic_light_ids: [10324, 190343]
+        opposite_phase_ids: [10316, 10322]
+      traffic_light2:
+        traffic_light_ids: [10352]
+        opposite_phase_ids: [10356, 10359]
+      traffic_light3:
+        traffic_light_ids: [10513, 10516, 10518, 10519]
+        opposite_phase_ids: [10517, 10508]
+      traffic_light4:
+        traffic_light_ids: [10269, 10276]
+        opposite_phase_ids: [10263, 10277]
+      traffic_light5:
+        traffic_light_ids: [10247, 10261]
+        opposite_phase_ids: [10249]
+      traffic_light6:
+        traffic_light_ids: [10237, 10236]
+        opposite_phase_ids: [10238]
+      traffic_light7:
+        traffic_light_ids: [10546, 10549]
+        opposite_phase_ids: [10551]
+      traffic_light8:
+        traffic_light_ids: [10584]
+        opposite_phase_ids: [10589]
+      traffic_light9:
+        traffic_light_ids: [10562, 10564]
+        opposite_phase_ids: [10556]
+      traffic_light10:
+        traffic_light_ids: [10575, 10569]
+        opposite_phase_ids: [10571, 10581]
+      traffic_light11:
+        traffic_light_ids: [10610, 10598]
+        opposite_phase_ids: [10604]
+      traffic_light12:
+        traffic_light_ids: [10342]
+        opposite_phase_ids: [10343]
+      traffic_light13:
+        traffic_light_ids: [10522, 10532, 10533]
+        opposite_phase_ids: [10526]
+
+    npc_names:
+      - "vehicle0"
+      - "vehicle1"
+      - "vehicle2"
+      - "vehicle3"
+      - "vehicle4"
+      - "vehicle5"
+      - "vehicle6"
+      - "vehicle7"
+      - "vehicle8"
+      - "vehicle9"
+      - "vehicle10"
+      - "vehicle11"
+      - "vehicle12"
+      - "vehicle13"
+      - "vehicle14"
+      - "moving_vehicle0"
+      - "moving_vehicle1"
+      - "moving_vehicle2"
+      - "moving_vehicle3"
+      - "moving_vehicle4"
+      - "moving_vehicle5"
+      - "moving_vehicle6"
+      - "moving_vehicle7"
+      - "moving_vehicle8"
+      - "moving_vehicle9"
+      - "moving_vehicle10"
+      - "moving_vehicle11"
+      - "moving_vehicle12"
+      - "moving_vehicle13"
+      - "moving_vehicle14"
+      - "moving_vehicle15"
+      - "moving_vehicle16"
+      - "moving_vehicle17"
+      - "moving_vehicle18"
+      - "moving_vehicle19"
+      - "moving_vehicle20"
+      - "pedestrian0"
+      - "pedestrian1"
+
+    npc:
+      vehicle0:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 176671 
+        goal_lane_id: 176671 
+        min_num: 4 
+        max_num: 4 
+        direction: "very_left"
+      vehicle1:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 176640
+        goal_lane_id: 176640
+        min_num: 4 
+        max_num: 4
+        direction: "very_left"
+      vehicle2:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 176148
+        goal_lane_id: 176148
+        min_num: 0 
+        max_num: 4 
+        direction: "left"
+      vehicle3:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 176193
+        goal_lane_id: 176193
+        min_num: 0
+        max_num: 4 
+        direction: "left"
+      vehicle4:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 1262
+        goal_lane_id: 1262
+        min_num: 1 
+        max_num: 4 
+        direction: "right"
+      vehicle5:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 1265
+        goal_lane_id: 1265
+        min_num: 1 
+        max_num: 4 
+        direction: "left"
+      vehicle6:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 1278
+        goal_lane_id: 1278
+        min_num: 1
+        max_num: 2 
+        direction: "left"
+      vehicle7:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 179398
+        goal_lane_id: 179398
+        min_num: 1
+        max_num: 2
+        direction: "left"
+      vehicle8:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 190784
+        goal_lane_id: 190784
+        min_num: 0
+        max_num: 1
+        direction: "left"
+      vehicle9:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 190797
+        goal_lane_id: 190797
+        min_num: 0
+        max_num: 1
+        direction: "left"
+      vehicle10:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 1513
+        goal_lane_id: 1513
+        min_num: 1 
+        max_num: 2 
+        direction: "center"
+      vehicle11:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 1468
+        goal_lane_id: 1468
+        min_num: 1 
+        max_num: 2 
+        direction: "center"
+      vehicle12:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 178766
+        goal_lane_id: 178766
+        min_num: 0 
+        max_num: 1
+        direction: "left"
+      vehicle13:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 179473
+        goal_lane_id: 179473
+        min_num: 0 
+        max_num: 1
+        direction: "left"
+      vehicle14:
+        npc_type: "parked_vehicle"
+        spawn_lane_id: 184
+        goal_lane_id: 184
+        min_num: 1 
+        max_num: 3
+        direction: "left"
+
+      moving_vehicle0:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 176261
+        goal_lane_id: 176175
+      moving_vehicle1:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 350
+        goal_lane_id: 163
+      moving_vehicle2:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 350
+        goal_lane_id: 1506
+      moving_vehicle3:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1482
+        goal_lane_id: 38
+      moving_vehicle4:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1483
+        goal_lane_id: 38
+      moving_vehicle5:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1484
+        goal_lane_id: 39
+      moving_vehicle6:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1501
+        goal_lane_id: 40
+      moving_vehicle7:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 32
+        goal_lane_id: 38
+      moving_vehicle8:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 33
+        goal_lane_id: 39
+      moving_vehicle9:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 34
+        goal_lane_id: 40
+      moving_vehicle10:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1314
+        goal_lane_id: 41
+      moving_vehicle11:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 94
+        goal_lane_id: 41
+      moving_vehicle12:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 175378
+        goal_lane_id: 174994
+      moving_vehicle13:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1263
+        goal_lane_id: 106
+      moving_vehicle14:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1265
+        goal_lane_id: 178001
+      moving_vehicle15:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1153
+        goal_lane_id: 94
+      moving_vehicle16:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 178233
+        goal_lane_id: 179475
+      moving_vehicle17:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 74
+        goal_lane_id: 84
+      moving_vehicle18:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 75
+        goal_lane_id: 83
+      moving_vehicle19:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 75
+        goal_lane_id: 178573
+      moving_vehicle20:
+        npc_type: "moving_vehicle"
+        spawn_lane_id: 1483
+        goal_lane_id: 1500
+
+      pedestrian0:
+        npc_type: "pedestrian"
+        spawn_lane_id: 177703
+        goal_lane_id: 177703
+        min_num: 1 
+        max_num: 3
+        direction: "center"
+        min_speed: 0.0
+        max_speed: 2.0
+      pedestrian1:
+        npc_type: "pedestrian"
+        spawn_lane_id: 176046
+        goal_lane_id: 176079
+        min_num: 1 
+        max_num: 2 
+        direction: "very_right"
+        min_speed: 0.0
+        max_speed: 2.0

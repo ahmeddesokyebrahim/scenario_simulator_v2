@@ -1,5 +1,36 @@
 /**:
   ros__parameters:
+    map_dir: "/workspace/bs_stable"
+
+    respawn:
+      init_lane_id: 95
+      goal_lane_id: 45
+
+    route_names:
+      - "route1"
+      - "route2"
+
+    route:
+      route1:
+        start_lane_id: 95
+        route_ids: [30, 37, 45]
+        fix_start_pose: false
+        fix_goal_pose: false
+        init_start_lane: true
+      route2:
+        route_ids: [7, 95]
+        fix_start_pose: false
+        fix_goal_pose: false
+        init_start_lane: false
+
+    traffic_light_names:
+      - "traffic_light0"
+
+    traffic_light:
+      traffic_light0:
+        traffic_light_ids: [8335, 8324]
+        opposite_phase_ids: [8313, 8302]
+
     npc_names:
       - "vehicle0"
       - "vehicle1"
