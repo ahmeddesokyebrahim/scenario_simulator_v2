@@ -65,11 +65,15 @@ public:
   bool processForEgoStuck();
   template <typename T>
   void callServiceWithoutResponse(const typename rclcpp::Client<T>::SharedPtr client);
+  template <typename T>
+  void callServiceWithResponse(
+    const typename rclcpp::Client<T>::SharedPtr client, const std::string & expected_message);
 
 protected:
   traffic_simulator::API api_;
   common::junit::JUnit5 junit_;
-  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr capture_cli_;
+  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr screen_shot_capture_cli_;
+  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr video_capture_cli_;
 
   std::queue<std::tuple<std::optional<lanelet::Id>, bool, std::vector<lanelet::Id>, bool>> route_;
   lanelet::Id init_lane_id_;
