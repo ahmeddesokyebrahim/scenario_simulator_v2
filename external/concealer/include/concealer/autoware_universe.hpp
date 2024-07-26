@@ -21,6 +21,7 @@
 #include <autoware_vehicle_msgs/msg/steering_report.hpp>
 #include <autoware_vehicle_msgs/msg/turn_indicators_report.hpp>
 #include <autoware_vehicle_msgs/msg/velocity_report.hpp>
+#include <autoware_vehicle_msgs/srv/control_mode_command.hpp>
 #include <concealer/autoware.hpp>
 #include <concealer/publisher_wrapper.hpp>
 #include <concealer/subscriber_wrapper.hpp>
@@ -50,6 +51,9 @@ class AutowareUniverse : public Autoware
   PublisherWrapper<autoware_vehicle_msgs::msg::VelocityReport>       setVelocityReport;
   PublisherWrapper<autoware_vehicle_msgs::msg::TurnIndicatorsReport> setTurnIndicatorsReport;
   // clang-format on
+
+  rclcpp::Service<autoware_vehicle_msgs::srv::ControlModeCommand>::SharedPtr
+    control_mode_request_server;
 
   const rclcpp::TimerBase::SharedPtr localization_update_timer;
 
@@ -94,9 +98,11 @@ public:
 
   auto getRouteLanelets() const -> std::vector<std::int64_t>;
 
-  auto setManualMode() -> void override;
+  auto getControlModeReport() const -> autoware_vehicle_msgs::msg::ControlModeReport override;
 
   auto setAutonomousMode() -> void override;
+
+  auto setManualMode() -> void override;
 };
 
 }  // namespace concealer
