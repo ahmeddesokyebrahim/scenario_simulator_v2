@@ -40,17 +40,14 @@ auto TrafficLightPublisher<autoware_perception_msgs::msg::TrafficSignalArray>::p
     auto relation_ids =
       hdmap_utils_->getTrafficLightRegulatoryElementIDsFromTrafficLight(traffic_light.id());
 
-    for (auto relation_id : relation_ids) {
+    for (const auto & relation_id : relation_ids) {
       // skip if the traffic light has no bulbs
       if (not traffic_light.traffic_light_status().empty()) {
         using TrafficLightType = autoware_perception_msgs::msg::TrafficSignal;
         TrafficLightType traffic_light_message;
-    traffic_light_message.map_primitive_id = traffic_light.id();
-    for (const auto & bulb_status : traffic_light.traffic_light_status()) {
-      using TrafficLightBulbType = TrafficLightType::_lights_type::value_type;
         traffic_light_message.traffic_signal_id = relation_id;
 
-        for (auto bulb_status : traffic_light.traffic_light_status()) {
+        for (const auto & bulb_status : traffic_light.traffic_light_status()) {
           using TrafficLightBulbType =
             autoware_perception_msgs::msg::TrafficSignal::_elements_type::value_type;
           TrafficLightBulbType light_bulb_message;
@@ -79,16 +76,13 @@ auto TrafficLightPublisher<autoware_perception_msgs::msg::TrafficLightGroupArray
     auto relation_ids =
       hdmap_utils_->getTrafficLightRegulatoryElementIDsFromTrafficLight(traffic_light.id());
 
-    for (const auto & relation_id : relation_ids) {
+    for (auto relation_id : relation_ids) {
       // skip if the traffic light has no bulbs
       if (not traffic_light.traffic_light_status().empty()) {
         using TrafficLightGroupType = autoware_perception_msgs::msg::TrafficLightGroup;
         TrafficLightGroupType traffic_light_group_message;
         traffic_light_group_message.traffic_light_group_id = relation_id;
 
-        for (const auto & bulb_status : traffic_light.traffic_light_status()) {
-          using TrafficLightBulbType =
-            autoware_perception_msgs::msg::TrafficSignal::_elements_type::value_type;
         for (auto bulb_status : traffic_light.traffic_light_status()) {
           using TrafficLightBulbType = autoware_perception_msgs::msg::TrafficLightElement;
           TrafficLightBulbType light_bulb_message;
