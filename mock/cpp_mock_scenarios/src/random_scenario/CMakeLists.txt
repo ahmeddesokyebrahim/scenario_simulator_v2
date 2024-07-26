@@ -24,6 +24,13 @@ target_link_libraries(random003
   cpp_scenario_node
   common_parameters
 )
+ament_auto_add_executable(random004
+  scenario_base.cpp
+)
+target_link_libraries(random004
+  cpp_scenario_node
+  common_parameters
+)
 target_include_directories(random001
   PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/common_parameters/include
 )
@@ -32,6 +39,7 @@ install(TARGETS
   random001
   random002
   random003
+  random004
   DESTINATION lib/cpp_mock_scenarios
 )
 

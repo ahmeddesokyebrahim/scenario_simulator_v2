@@ -1,0 +1,116 @@
+/**:
+  ros__parameters:
+    map_dir: "/workspace/Shiojiri_Lv4"
+
+    respawn:
+      init_lane_id: 57107
+      goal_lane_id: 20976
+
+    route_names:
+      - "route1"
+      # - "route2"
+
+    route:
+      route1:
+        start_lane_id: 57107
+        route_ids: [20976]
+        fix_start_pose: false
+        fix_goal_pose: false
+        init_start_lane: true
+      # route2:
+      #   route_ids: [20976]
+      #   fix_start_pose: false
+      #   fix_goal_pose: false
+      #   init_start_lane: false
+
+    # traffic_light_names:
+    #   - "traffic_light0"
+
+    # traffic_light:
+    #   traffic_light0:
+    #     traffic_light_ids: [8335, 8324]
+    #     opposite_phase_ids: [8313, 8302]
+
+    # npc_names:
+    #   - "vehicle0"
+    #   - "vehicle1"
+    #   - "vehicle2"
+    #   - "vehicle3"
+    #   - "vehicle4"
+    #   - "vehicle5"
+    #   - "pedestrian0"
+    #   - "pedestrian2"
+    #   - "pedestrian3"
+
+    # npc:
+    #   vehicle0:
+    #     npc_type: "parked_vehicle"
+    #     spawn_lane_id: 57
+    #     goal_lane_id: 57
+    #     min_num: 1
+    #     max_num: 1
+    #     direction: "left"
+    #   vehicle1:
+    #     npc_type: "parked_vehicle"
+    #     spawn_lane_id: 37
+    #     goal_lane_id: 37
+    #     min_num: 0 
+    #     max_num: 2
+    #     direction: "left"
+    #   vehicle2:
+    #     npc_type: "parked_vehicle"
+    #     spawn_lane_id: 8022
+    #     goal_lane_id: 8022
+    #     min_num: 0 
+    #     max_num: 2
+    #     direction: "very_right"
+    #   vehicle3:
+    #     npc_type: "parked_vehicle"
+    #     spawn_lane_id: 39
+    #     goal_lane_id: 39
+    #     min_num: 0
+    #     max_num: 2
+    #     direction: "very_left"
+
+    #   vehicle4:
+    #     npc_type: "moving_vehicle"
+    #     spawn_lane_id: 97
+    #     goal_lane_id: 62 
+    #     min_num: 1
+    #     max_num: 2 
+    #     direction: "center"
+    #   vehicle5:
+    #     npc_type: "moving_vehicle"
+    #     spawn_lane_id: 8017
+    #     goal_lane_id: 57
+    #     min_num: 2 
+    #     max_num: 4
+    #     direction: "center"
+
+    #   pedestrian0:
+    #     npc_type: "pedestrian"
+    #     spawn_lane_id: 37
+    #     goal_lane_id: 37
+    #     min_num: 1 
+    #     max_num: 3
+    #     direction: "left"
+    #     min_speed: 0.0
+    #     max_speed: 2.0
+    #   pedestrian1:
+    #     npc_type: "pedestrian"
+    #     spawn_lane_id: 57
+    #     goal_lane_id: 57
+    #     min_num: 1 
+    #     max_num: 3
+    #     direction: "right"
+    #     min_speed: 0.0
+    #     max_speed: 2.0
+    #   pedestrian2:
+    #     npc_type: "pedestrian"
+    #     spawn_lane_id: 8017
+    #     goal_lane_id: 8 
+    #     min_num: 1 
+    #     max_num: 3
+    #     direction: "very_left"
+    #     min_speed: 0.0
+    #     max_speed: 2.0
