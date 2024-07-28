@@ -34,32 +34,32 @@ jobs:
           repository: RobotecAI/scenario_simulator_v2_scenarios
           path: src/scenario_simulator_v2_scenarios
 
-      # - name: Search packages in this repository
-      #   id: list_packages
-      #   run: |
-      #     echo package_list=$(colcon list --names-only | tr '\n' ' ') >> $GITHUB_OUTPUT
+      - name: Search packages in this repository
+        id: list_packages
+        run: |
+          echo package_list=$(colcon list --names-only | tr '\n' ' ') >> $GITHUB_OUTPUT
 
-      # - name: Show target packages
-      #   run: |
-      #     echo "Target packages: ${{ steps.list_packages.outputs.package_list }}"
+      - name: Show target packages
+        run: |
+          echo "Target packages: ${{ steps.list_packages.outputs.package_list }}"
 
-      # - name: Install dependencies
-      #   run: |
-      #     vcs import src < src/scenario_simulator_v2/dependency_${{ matrix.rosdistro }}.repos
+      - name: Install dependencies
+        run: |
+          vcs import src < src/scenario_simulator_v2/dependency_${{ matrix.rosdistro }}.repos
 
-      # - name: Resolve rosdep
-      #   run: |
-      #     apt-get update
-      #     apt-get install -y python3-pip
-      #     rosdep update --include-eol-distros
-      #     rosdep install -iy --from-paths src --rosdistro ${{ matrix.rosdistro }}
-      #   shell: bash
+      - name: Resolve rosdep
+        run: |
+          apt-get update
+          apt-get install -y python3-pip
+          rosdep update --include-eol-distros
+          rosdep install -iy --from-paths src --rosdistro ${{ matrix.rosdistro }}
+        shell: bash
 
-      # - name: Build packages
-      #   run: |
-      #     source /opt/ros/${{ matrix.rosdistro }}/setup.bash
-      #     colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_CPP_MOCK_SCENARIOS=ON --packages-up-to ${{ steps.list_packages.outputs.package_list }}
-      #   shell: bash
+      - name: Build packages
+        run: |
+          source /opt/ros/${{ matrix.rosdistro }}/setup.bash
+          colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_CPP_MOCK_SCENARIOS=ON --packages-up-to ${{ steps.list_packages.outputs.package_list }}
+        shell: bash
 
       - name: Snyk monitor
         uses: snyk/actions/node@master
@@ -69,4 +69,3 @@ jobs:
           args: --unmanaged --org=${{ secrets.SNYK_ORG }} --project-name=scenario_simulator_v2 --remote-repo-url=https://github.com/tier4/scenario_simulator_v2 
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
