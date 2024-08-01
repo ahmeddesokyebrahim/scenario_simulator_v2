@@ -27,8 +27,8 @@ Panels:
     Name: AutowareStatePanel
   - Class: AutowareScreenCapturePanel
     Name: AutowareScreenCapturePanel
-  - Class: rviz_plugins::MetricsVisualizePanel
-    Name: MetricsVisualizePanel
+  # - Class: rviz_plugins::MetricsVisualizePanel
+  #   Name: MetricsVisualizePanel
 Visualization Manager:
   Class: ""
   Displays:
@@ -226,7 +226,33 @@ Visualization Manager:
           Enabled: true
           Name: Lanelet2VectorMap
           Namespaces:
-            {}
+            center_lane_line: false
+            center_line_arrows: false
+            crosswalk_lanelets: true
+            crosswalk_areas: false
+            lane_start_bound: false
+            lanelet direction: true
+            lanelet_id: false
+            left_lane_bound: true
+            parking_lots: true
+            parking_space: true
+            pedestrian_marking: true
+            right_lane_bound: true
+            road_lanelets: false
+            speed_bump: true
+            stop_lines: true
+            shoulder_center_lane_line: false
+            shoulder_left_lane_bound: true
+            shoulder_right_lane_bound: true
+            shoulder_road_lanelets: false
+            traffic_light: true
+            traffic_light_id: false
+            traffic_light_reg_elem_id: false
+            traffic_light_triangle: true
+            walkway_lanelets: true
+            hatched_road_markings_bound: true
+            hatched_road_markings_area: false
+            intersection_area: false
           Topic:
             Depth: 5
             Durability Policy: Transient Local
@@ -3112,7 +3138,7 @@ Visualization Manager:
       Name: Current View
       Near Clip Distance: 0.009999999776482582
       Scale: 10
-      Target Frame: entities
+      Target Frame: base_link
       Value: TopDownOrtho (rviz_default_plugins)
       X: 0
       Y: 0
@@ -3148,7 +3174,7 @@ Visualization Manager:
         Name: TopDownOrtho
         Near Clip Distance: 0.009999999776482582
         Scale: 10
-        Target Frame: viewer
+        Target Frame: base_link
         Value: TopDownOrtho (rviz)
         X: 0
         Y: 0
