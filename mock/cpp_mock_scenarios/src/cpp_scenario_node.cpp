@@ -177,15 +177,15 @@ void CppScenarioNode::updateRoute()
   }
 
   const auto lon_offset = [&, this](const bool is_random, const auto & lane_id) {
-    const auto lane_length = api_.getLaneletLength(lane_id);
-    std::uniform_real_distribution<> dist(3.0, api_.getLaneletLength(lane_id) - 3.0);
+    const auto lane_length = traffic_simulator::pose::laneletLength(lane_id, api_.getHdmapUtils());
+    std::uniform_real_distribution<> dist(3.0, lane_length - 3.0);
     return is_random ? dist(engine_) : 3.0;
   };
 
   std::vector<traffic_simulator::CanonicalizedLaneletPose> new_lane_poses;
   for (const auto & id : route_lane_ids) {
-    new_lane_poses.push_back(
-      api_.canonicalize(constructLaneletPose(id, lon_offset(is_random_goal_pose, id))));
+    new_lane_poses.push_back(traffic_simulator::helper::constructCanonicalizedLaneletPose(
+      id, lon_offset(is_random_goal_pose, id), 0.0, api_.getHdmapUtils()));
   }
   api_.requestClearRoute("ego");
   api_.requestAssignRoute("ego", new_lane_poses);
@@ -196,20 +196,22 @@ void CppScenarioNode::respawn(
   const lanelet::Id & goal_lane_id, const bool is_random_goal_pose)
 {
   const auto lon_offset = [&, this](const bool is_random, const auto & lane_id) {
-    const auto lane_length = api_.getLaneletLength(lane_id);
-    std::uniform_real_distribution<> dist(3.0, api_.getLaneletLength(lane_id) - 3.0);
+    const auto lane_length = traffic_simulator::pose::laneletLength(lane_id, api_.getHdmapUtils());
+    std::uniform_real_distribution<> dist(3.0, lane_length - 3.0);
     return is_random ? dist(engine_) : 3.0;
   };
 
   geometry_msgs::msg::PoseWithCovarianceStamped ego_pose;
   ego_pose.header.frame_id = "map";
-  ego_pose.pose.pose = api_.toMapPose(api_.canonicalize(
-    constructLaneletPose(start_lane_id, lon_offset(is_random_start_pose, start_lane_id))));
+  ego_pose.pose.pose =
+    traffic_simulator::pose::toMapPose(traffic_simulator::helper::constructCanonicalizedLaneletPose(
+      start_lane_id, lon_offset(is_random_start_pose, start_lane_id), 0.0, api_.getHdmapUtils()));
 
   geometry_msgs::msg::PoseStamped goal_pose;
   goal_pose.header.frame_id = "map";
-  goal_pose.pose = api_.toMapPose(api_.canonicalize(
-    constructLaneletPose(goal_lane_id, lon_offset(is_random_goal_pose, goal_lane_id))));
+  goal_pose.pose =
+    traffic_simulator::pose::toMapPose(traffic_simulator::helper::constructCanonicalizedLaneletPose(
+      goal_lane_id, lon_offset(is_random_goal_pose, goal_lane_id), 0.0, api_.getHdmapUtils()));
 
   api_.respawn("ego", ego_pose, goal_pose);
 }
