@@ -34,9 +34,13 @@ namespace math
 namespace geometry
 {
 double getDistance(const geometry_msgs::msg::Point & p0, const geometry_msgs::msg::Point & p1);
+double getDistance2D(const geometry_msgs::msg::Point & p0, const geometry_msgs::msg::Point & p1);
 double getDistance(const geometry_msgs::msg::Pose & p0, const geometry_msgs::msg::Point & p1);
+double getDistance2D(const geometry_msgs::msg::Pose & p0, const geometry_msgs::msg::Point & p1);
 double getDistance(const geometry_msgs::msg::Point & p0, const geometry_msgs::msg::Pose & p1);
+double getDistance2D(const geometry_msgs::msg::Point & p0, const geometry_msgs::msg::Pose & p1);
 double getDistance(const geometry_msgs::msg::Pose & p0, const geometry_msgs::msg::Pose & p1);
+double getDistance2D(const geometry_msgs::msg::Pose & p0, const geometry_msgs::msg::Pose & p1);
 double getDistance2D(
   const std::vector<geometry_msgs::msg::Point> & polygon0,
   const std::vector<geometry_msgs::msg::Point> & polygon1);
